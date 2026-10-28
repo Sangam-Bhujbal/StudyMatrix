@@ -132,8 +132,10 @@ function pickVoiceForPreset(presetKey) {
   const preset = PRESETS[presetKey] || PRESETS.goggins;
   const wanted = preset.gender;
   if (savedVoiceURI) {
-    const exact = allVoices.find((v) => v.voiceURI === savedVoiceURI);
-    if (exact) return exact;
+    const saved = allVoices.find((v) => v.voiceURI === savedVoiceURI);
+    if (saved && (genderOf(saved) === wanted || genderOf(saved) === 'neutral')) {
+      return saved;
+    }
   }
   return (
     allVoices.find((v) => genderOf(v) === wanted && v.lang.startsWith('en')) ||
@@ -204,6 +206,11 @@ function setPreset(key) {
   activePreset = key;
   DB.set('voice_preset', key);
   preferredVoice = pickVoiceForPreset(key);
+  if (preferredVoice) {
+    savedVoiceURI = preferredVoice.voiceURI;
+    DB.set('voice_uri', savedVoiceURI);
+  }
+  populateVoiceSelect();
   document.querySelectorAll('.voice-preset-btn').forEach((btn) => {
     btn.classList.toggle('active', btn.dataset.preset === key);
   });

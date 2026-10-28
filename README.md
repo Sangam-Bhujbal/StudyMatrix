@@ -64,6 +64,7 @@ browser's local state before a presentation.
   before using real user accounts.
 - Keep the Supabase service-role key off the client permanently. Only a
   properly restricted public/anon key may be used in a browser.
+- See [SECURITY.md](./SECURITY.md) for the public-repository security notes.
 
 ## Optional Supabase sync
 
