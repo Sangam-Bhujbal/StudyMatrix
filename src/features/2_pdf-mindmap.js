@@ -145,6 +145,8 @@ async function generateMindMap(topic = 'default', label = 'document', options = 
 async function renderMermaid(diagramSrc) {
   if (!mermaidContainer) throw new Error('Mind-map canvas missing');
   mermaidContainer.innerHTML = '';
+  mermaidContainer.style.justifyContent = 'flex-start';
+  mermaidContainer.style.alignItems = 'flex-start';
 
   const renderId = `mmd-render-${Date.now()}`;
   const div = document.createElement('div');
