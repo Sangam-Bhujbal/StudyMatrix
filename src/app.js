@@ -4,11 +4,12 @@
  * Full implementation delivered in Phase 2.
  */
 
-// ── Module Imports (filled per phase) ──────────────────────────────
+// ── Module Imports ──────────────────────────────────────────────────
 import './core/local-db.js';
 import './features/1_onboarding.js';
+import './features/2_pdf-mindmap.js';
 
-console.log('%c[StudyMatrix] Bootstrap loaded — Phase 1 Shell Ready ✅', 'color:#8b5cf6;font-weight:bold;');
+console.log('%c[StudyMatrix] Bootstrap loaded — Phase 2 Ready 🧠', 'color:#8b5cf6;font-weight:bold;');
 
 // ── Tab Router ──────────────────────────────────────────────────────
 const NAV_LINKS   = document.querySelectorAll('.nav-link');
