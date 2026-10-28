@@ -902,9 +902,19 @@ a:focus-visible {
 
 select.glass-input {
   appearance: none;
+  color-scheme: dark;
   background-image: linear-gradient(45deg, transparent 50%, #a78bfa 50%),
                     linear-gradient(135deg, #a78bfa 50%, transparent 50%);
   background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
+}
+
+select.glass-input option {
+  background: var(--obsidian-card);
+  color: #f3f4f6;
+}
+
+input[type="time"].glass-input {
+  color-scheme: dark;
 }
