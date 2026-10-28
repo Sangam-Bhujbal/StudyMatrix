@@ -14,9 +14,6 @@
   <!-- PDF.js for syllabus extraction -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-  <!-- Supabase JS (optional cloud persistence) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <!-- Custom Styles -->
   <link rel="stylesheet" href="styles/main.css" />
 
@@ -176,7 +173,7 @@
       </div>
 
       <p class="text-center text-xs text-gray-600 mt-4">
-        Guest demo needs no account. Login data stays in this browser unless you connect Supabase.
+        Guest demo needs no account. Login data stays in this browser.
       </p>
     </div>
   </div>
@@ -422,7 +419,7 @@
         <!-- ── TAB: Focus Timer ── -->
         <section id="tab-focus" class="workspace-panel hidden">
           <!-- Timer + Audio Mixer side by side -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div>
 
             <!-- Timer Card -->
             <div class="glass-card rounded-xl p-6 flex flex-col items-center">
@@ -760,17 +757,6 @@
                   <span class="toggle-track"></span>
                 </label>
               </div>
-            </div>
-
-            <div class="glass-card rounded-xl p-6">
-              <h3 class="font-bold text-white mb-1">Cloud Sync Status</h3>
-              <p id="settings-sync-status" class="text-sm text-gray-400 mb-4">Local-Only Mode</p>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Supabase URL</label>
-              <input id="supabase-url" type="url" placeholder="https://xxxx.supabase.co" class="glass-input w-full mb-3" />
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Anon / public key</label>
-              <input id="supabase-key" type="password" placeholder="eyJhbGciOi..." class="glass-input w-full mb-3" />
-              <button type="button" id="btn-save-supabase" class="btn-primary w-full">Save &amp; connect</button>
-              <p class="text-xs text-muted mt-3">Optional. If empty, everything stays in LocalStorage.</p>
             </div>
           </div>
 

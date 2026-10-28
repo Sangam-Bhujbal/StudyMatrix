@@ -38,7 +38,7 @@ cannot run the secure serverless endpoint.
   and subject priorities. Generated sessions avoid busy periods and can be
   marked **Done**, **Not done**, or **Skip**; status is saved locally so
   students can manage the plan day by day.
-- Local login/demo session, JSON backup/import, and optional Supabase sync
+- Local login/demo session and JSON backup/import
 
 ## Run locally
 
@@ -68,21 +68,11 @@ browser's local state before a presentation.
 - This repository is designed to be public.
 - No real API keys, service-role keys, or passwords should be committed.
 - `.env`, `.env.*`, and `*.local` files are ignored by Git.
-- Supabase credentials are entered at runtime and stored only in the current
-  browser when cloud sync is enabled.
+- Demo data and preferences are stored locally in the current browser.
 - The included login is a demo-only client-side flow, not production
   authentication. Use Supabase Auth or another server-backed identity provider
   before using real user accounts.
-- Keep the Supabase service-role key off the client permanently. Only a
-  properly restricted public/anon key may be used in a browser.
 - See [SECURITY.md](./SECURITY.md) for the public-repository security notes.
-
-## Optional Supabase sync
-
-Cloud sync is optional. Create a `study_sessions` table with policies that
-match your security model, then enter the project URL and restricted anon key
-under Settings. If the connection is unavailable, the app continues in
-Local-Only mode.
 
 ## Project structure
 
@@ -123,7 +113,6 @@ Built for the Education Track Hackathon.
 - PDF.js for extracting text from uploaded PDF syllabi
 - LocalStorage through the `DB` adapter for demo sessions, schedules, voice
   preferences, backups, and task status
-- Optional Supabase browser client for user-configured cloud sync
 - Optional Gemini API through the server-only `/api/ai` Vercel function
 - Vercel/GitHub Pages-compatible static deployment
 

@@ -27,7 +27,7 @@ const TAB_META = {
   'tab-quiz':      { title: 'Quiz Lab',      subtitle: 'Turn notes into active recall' },
   'tab-bionic':    { title: 'Bionic Reader', subtitle: 'Read faster with neural typography' },
   'tab-schedule':  { title: 'My Schedule',   subtitle: 'AI-adaptive study timetable' },
-  'tab-settings':  { title: 'Settings',      subtitle: 'Cloud sync, simulation, JSON backup' },
+  'tab-settings':  { title: 'Settings',      subtitle: 'Demo controls and local backup' },
 };
 
 function normalizeTab(id) {

@@ -1,9 +1,7 @@
 /**
- * 7_settings.js — Settings tab helpers (simulation, cloud, backup)
+ * 7_settings.js — Settings tab helpers (simulation and local backup)
  */
-import { bindSettingsSyncUI, initSyncManager } from '../core/sync-manager.js';
+import { bindSettingsSyncUI } from '../core/sync-manager.js';
 
 bindSettingsSyncUI();
-initSyncManager();
-
-console.log('[Settings] Cloud sync + backup controls ready ✅');
+console.log('[Settings] Demo and backup controls ready ✅');

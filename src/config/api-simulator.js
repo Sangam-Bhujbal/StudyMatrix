@@ -318,8 +318,8 @@ export const CHATBOT_RESPONSES = {
     "If you pause early, your selected coach will turn the moment into a comeback cue.",
   ],
   'tab-settings': [
-    "Settings is your backup bay: export JSON, import on another device, or plug in Supabase for cloud sync.",
-    "Without a Supabase URL and anon key, StudyMatrix stays 100% Local-Only — that's the demo-safe default.",
+    "Settings is your backup bay: export JSON, import on another device, and reset the demo when you hand it to someone new.",
+    "The app stores demo data locally in this browser, so the public showcase stays simple and safe.",
     "Keep AI Simulation ON for hackathon demos so every feature returns rich mock results after 2 seconds.",
     "Demo login is demo@studymatrix.app / Demo@1234 if a judge needs a saved account.",
   ],
