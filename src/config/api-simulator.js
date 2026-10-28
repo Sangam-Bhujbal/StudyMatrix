@@ -33,7 +33,12 @@ async function requestLiveAI(type, input) {
   return payload.result || null;
 }
 
-async function liveOrFallback(type, input, fallback) {
+async function liveOrFallback(type, input, fallback, options = {}) {
+  if (options.forceDemo) {
+    await wait(SIMULATED_DELAY_MS);
+    return fallback();
+  }
+
   try {
     const live = await requestLiveAI(type, input);
     if (live) return live;
@@ -353,14 +358,14 @@ export const CHATBOT_RESPONSES = {
  * @param {string} topic - detected topic slug ('physics', 'biology', or 'default')
  * @returns {Promise<{title, mermaid, nodeCount, depth}>}
  */
-export async function simulateMindMap(topic = 'default') {
+export async function simulateMindMap(topic = 'default', options = {}) {
   return liveOrFallback('mindmap', String(topic || 'default'), () => {
     const blob = String(topic || 'default').toLowerCase();
     const key = Object.keys(MOCK_MINDMAPS).find(k => blob.includes(k)) || 'default';
     const result = { ...MOCK_MINDMAPS[key] };
     result.missing_concepts = result.missing_concepts || [];
     return result;
-  });
+  }, options);
 }
 
 /** Alias expected by newer feature wiring */

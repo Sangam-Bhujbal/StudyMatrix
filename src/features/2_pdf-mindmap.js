@@ -7,7 +7,7 @@
  *  3. simulateMindMap() called → 2.5s loading state shown
  *  4. Mock Mermaid.js diagram rendered in UI
  *
- * Also handles the "Run Demo" button (no PDF needed).
+ * Also handles the "Run Demo" button (no PDF or network needed).
  */
 
 import { simulateMindMap } from '../config/api-simulator.js';
@@ -97,8 +97,9 @@ function detectTopic(text) {
  * Shows the loading state, calls simulator, then renders mind-map
  * @param {string} topic - detected or default topic slug
  * @param {string} label - display label for the loading message
+ * @param {{forceDemo?: boolean}} options - generation mode options
  */
-async function generateMindMap(topic = 'default', label = 'document') {
+async function generateMindMap(topic = 'default', label = 'document', options = {}) {
   // 1 — Show loading, hide output
   mindmapLoading?.classList.remove('hidden');
   mindmapOutput?.classList.add('hidden');
@@ -110,7 +111,7 @@ async function generateMindMap(topic = 'default', label = 'document') {
 
   try {
     // 3 — Simulate AI call (2.5s delay + mock data)
-    const result = await simulateMindMap(topic);
+    const result = await simulateMindMap(topic, options);
 
     // 4 — Render with Mermaid.js
     await renderMermaid(result.mermaid);
@@ -268,7 +269,7 @@ btnDemoMindmap?.addEventListener('click', async () => {
     pdfFilenameEl.textContent = '🎭 Running demo — CS Fundamentals syllabus';
     pdfFilenameEl.classList.remove('hidden');
   }
-  await generateMindMap('default', 'demo syllabus');
+  await generateMindMap('default', 'demo syllabus', { forceDemo: true });
 });
 
 btnGenerateMindmap?.addEventListener('click', async () => {
