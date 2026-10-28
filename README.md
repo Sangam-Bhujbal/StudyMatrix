@@ -25,6 +25,10 @@ cannot run the secure serverless endpoint.
 - Sound Lab with 432Hz, brown noise, rain, ocean, fireplace, and wind waves
 - Full-screen Focus Shield with a live clock and one-button exit
 - Dual audio mixer, optional browser voice coach, and chatbot voice replies
+- Two voice personas (Male/Female) with English, Hindi, and Marathi language
+  selection. The Web Speech API uses the closest installed browser/OS voice;
+  Hindi or Marathi quality depends on whether that language voice is installed
+  on the device.
 - Feynman explanation evaluator and notes-to-quiz generator
 - Context-aware Matrix AI chatbot
 - Bionic reading mode
@@ -106,3 +110,25 @@ studymatrix/
 ```
 
 Built for the Education Track Hackathon.
+
+## Technology used
+
+- HTML5 for the application shell and accessible controls
+- CSS3 plus Tailwind CDN utility classes for the responsive dark UI
+- Vanilla JavaScript ES modules for feature logic and state management
+- Web Speech API for Male/Female coach voices and chatbot voice replies
+- Web Audio API for synthesized focus sounds (no audio files required)
+- Mermaid.js for the syllabus mind-map diagrams
+- PDF.js for extracting text from uploaded PDF syllabi
+- LocalStorage through the `DB` adapter for demo sessions, schedules, voice
+  preferences, backups, and task status
+- Optional Supabase browser client for user-configured cloud sync
+- Optional Gemini API through the server-only `/api/ai` Vercel function
+- Vercel/GitHub Pages-compatible static deployment
+
+## Code size
+
+The project contains approximately **5,214 tracked lines of source code** across
+HTML, CSS, JavaScript, and the serverless API. This count can change as
+features evolve; use `git ls-files` and a line-count command for an exact
+checkout-specific count.

@@ -294,14 +294,14 @@ const MOCK_QUIZ_SETS = [
 /** Chatbot context-aware responses */
 export const CHATBOT_RESPONSES = {
   'tab-dashboard': [
-    "Your dashboard shows your study stats at a glance! Sessions, focus time, and mind-maps all tracked here. 📊",
-    "Pro tip: Your chronotype determines your peak focus windows. Morning Birds should tackle hard topics before noon!",
+    "Your dashboard is mission control: every focused minute and every mapped topic becomes visible progress. 📊",
+    "Your chronotype is a study superpower. Put the hardest concept in your strongest energy window.",
     "You can navigate to any module from the sidebar. Where would you like to start today? 🎯",
     "I can see you're on the Dashboard. Try generating a Mind-Map first — it's the best way to start a new topic!",
   ],
   'tab-mindmap': [
-    "The Mind-Map generator uses AI to extract key concepts from your syllabus PDF and build a visual knowledge graph! 🧠",
-    "Pro tip: Upload a dense PDF — the denser the content, the richer the mind-map nodes will be.",
+    "The Mind-Map turns a syllabus into a visual trail of ideas, so you can see the subject before you study it. 🧠",
+    "Upload a dense syllabus and look for the bridges between concepts — those connections are where exam questions hide.",
     "Mermaid.js renders the mind-map as an interactive diagram. You can zoom and pan to explore all nodes!",
     "Try the Demo button if you don't have a PDF handy — it generates a full CS Fundamentals mind-map!",
   ],
@@ -312,10 +312,10 @@ export const CHATBOT_RESPONSES = {
     "Your audio mixer uses the Web Audio API — all synthesised locally, no downloads needed! 🎵",
   ],
   'tab-focus': [
-    "Focus Terminal is live. Pick a coach voice — Goggins, Mentor, Drill, or Zen — then start the radial timer.",
+    "Focus Terminal is live. Choose Male or Female, pick your language, and let one clean study block begin.",
     "Tab-switch detection logs a Focus Breach. Come back immediately if you leave mid-session.",
-    "Layer 432Hz binaural tones with rain for a dual-audio flow state.",
-    "Pause early and the selected coach will call you out. Stay in the chair.",
+    "Layer 432Hz tones with rain and turn the timer into a personal study soundtrack.",
+    "If you pause early, your selected coach will turn the moment into a comeback cue.",
   ],
   'tab-settings': [
     "Settings is your backup bay: export JSON, import on another device, or plug in Supabase for cloud sync.",

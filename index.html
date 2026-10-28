@@ -502,16 +502,22 @@
                 <div class="flex items-center justify-between mb-3">
                   <div>
                     <p class="text-sm font-medium text-white">Goggins Voice Coach</p>
-                    <p class="text-xs text-gray-500">Male, female, and persona options — speaks on pause / tab switch</p>
+                    <p class="text-xs text-gray-500">Choose one coach voice and speak in English, Hindi, or Marathi</p>
                   </div>
                   <label class="toggle-switch">
                     <input type="checkbox" id="voice-coach-toggle" checked />
                     <span class="toggle-track"></span>
                   </label>
                 </div>
-                <p class="text-[10px] uppercase tracking-widest text-muted mb-2">Coach persona</p>
+                <p class="text-[10px] uppercase tracking-widest text-muted mb-2">Coach voice</p>
                 <div id="voice-preset-list" class="grid grid-cols-2 gap-2 mb-3"></div>
-                <label class="block text-xs text-muted mb-1">System voice (male / female)</label>
+                <label class="block text-xs text-muted mb-1">Language</label>
+                <select id="voice-language" class="glass-input w-full text-sm mb-2">
+                  <option value="en-US">English</option>
+                  <option value="hi-IN">Hindi (हिन्दी)</option>
+                  <option value="mr-IN">Marathi (मराठी)</option>
+                </select>
+                <label class="block text-xs text-muted mb-1">Browser voice (male / female)</label>
                 <select id="voice-select" class="glass-input w-full text-sm mb-2"></select>
                 <button type="button" id="btn-preview-voice" class="btn-secondary text-xs w-full">Preview voice</button>
               </div>
