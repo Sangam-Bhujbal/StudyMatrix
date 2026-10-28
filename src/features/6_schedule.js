@@ -26,6 +26,8 @@ const dailyHoursInput   = document.getElementById('schedule-daily-hours');
 const collegeStartInput = document.getElementById('schedule-college-start');
 const collegeEndInput   = document.getElementById('schedule-college-end');
 const studyWindowInput  = document.getElementById('schedule-study-window');
+const busyStartInput    = document.getElementById('schedule-busy-start');
+const busyEndInput      = document.getElementById('schedule-busy-end');
 
 // ── State ─────────────────────────────────────────────────────────
 let subjects = DB.get('schedule_subjects', []);
@@ -129,10 +131,11 @@ function timeToMinutes(value) {
   return hours * 60 + minutes;
 }
 
-function slotOverlapsCollege(time, collegeStart, collegeEnd) {
+function slotOverlapsBusyTime(time, busyStart, busyEnd) {
   const start = timeToMinutes(time.slice(0, 5));
   const end = timeToMinutes(time.slice(8, 13));
-  return start < collegeEnd && end > collegeStart;
+  return Number.isFinite(busyStart) && Number.isFinite(busyEnd)
+    && busyStart < busyEnd && start < busyEnd && end > busyStart;
 }
 
 function buildScheduleData(subjects, chronotype, profile = {}) {
@@ -140,6 +143,8 @@ function buildScheduleData(subjects, chronotype, profile = {}) {
   const window = profile.studyWindow || (chronotype === 'morning' ? 'morning' : 'night');
   const collegeStart = timeToMinutes(profile.collegeStart || '09:00');
   const collegeEnd = timeToMinutes(profile.collegeEnd || '16:00');
+  const busyStart = timeToMinutes(profile.busyStart || '');
+  const busyEnd = timeToMinutes(profile.busyEnd || '');
   const dailyHours = Math.max(1, Number(profile.dailyHours) || 3);
   const preferred = baseSlots.filter(slot => {
     if (window === 'morning') return slot.slot === 'morning';
@@ -148,7 +153,8 @@ function buildScheduleData(subjects, chronotype, profile = {}) {
     return slot.slot === 'night';
   });
   const availableSlots = [...preferred, ...baseSlots.filter(slot => !preferred.includes(slot))]
-    .filter(slot => !slotOverlapsCollege(slot.time, collegeStart, collegeEnd));
+    .filter(slot => !slotOverlapsBusyTime(slot.time, collegeStart, collegeEnd)
+      && !slotOverlapsBusyTime(slot.time, busyStart, busyEnd));
   const slots = availableSlots.length ? availableSlots : baseSlots;
   const sessions = [];
 
@@ -175,6 +181,7 @@ function buildScheduleData(subjects, chronotype, profile = {}) {
         subject: subject.name,
         slot:    slot.slot,
         done:    false,
+        status:  'pending',
       });
     });
   });
@@ -204,6 +211,8 @@ async function generateSchedule() {
     collegeStart: collegeStartInput?.value || '09:00',
     collegeEnd: collegeEndInput?.value || '16:00',
     studyWindow: studyWindowInput?.value || (chronotype === 'morning' ? 'morning' : 'night'),
+    busyStart: busyStartInput?.value || '',
+    busyEnd: busyEndInput?.value || '',
   };
   DB.set('schedule_profile', profile);
   const sessions  = buildScheduleData(subjects, chronotype, profile);
@@ -269,12 +278,28 @@ function renderSchedule(sessions, chronotype) {
             <p class="text-sm font-semibold text-white truncate mt-0.5">${escapeHtml(sess.subject)}</p>
             <p class="text-xs text-gray-500">${sess.label}</p>
           </div>
-          <span class="done-check text-emerald text-lg opacity-0 transition-opacity shrink-0">✓</span>
+          <span class="session-status text-xs shrink-0"></span>
+        </div>
+        <div class="session-actions flex gap-1 mt-2">
+          <button type="button" class="session-action done-action">Done</button>
+          <button type="button" class="session-action missed-action">Not done</button>
+          <button type="button" class="session-action skip-action">Skip</button>
         </div>
       `;
 
-      // Toggle done on click
-      sessEl.addEventListener('click', () => toggleSessionDone(sessEl, sess));
+      applySessionStatus(sessEl, sess);
+      sessEl.querySelector('.done-action')?.addEventListener('click', e => {
+        e.stopPropagation();
+        setSessionStatus(sessEl, sess, 'done');
+      });
+      sessEl.querySelector('.missed-action')?.addEventListener('click', e => {
+        e.stopPropagation();
+        setSessionStatus(sessEl, sess, 'missed');
+      });
+      sessEl.querySelector('.skip-action')?.addEventListener('click', e => {
+        e.stopPropagation();
+        setSessionStatus(sessEl, sess, 'skipped');
+      });
       sessionsEl?.appendChild(sessEl);
     });
   });
@@ -285,24 +310,29 @@ function renderSchedule(sessions, chronotype) {
   addExportButton(sessions, chronotype);
 }
 
-function toggleSessionDone(el, sess) {
-  sess.done = !sess.done;
-  const check = el.querySelector('.done-check');
-
-  if (sess.done) {
-    el.style.opacity         = '0.45';
-    el.style.textDecoration  = 'line-through';
-    if (check) check.style.opacity = '1';
-  } else {
-    el.style.opacity        = '1';
-    el.style.textDecoration = 'none';
-    if (check) check.style.opacity = '0';
+function applySessionStatus(el, sess) {
+  const status = sess.status || (sess.done ? 'done' : 'pending');
+  const statusEl = el.querySelector('.session-status');
+  el.dataset.status = status;
+  el.style.opacity = status === 'done' ? '0.55' : '1';
+  el.style.textDecoration = status === 'done' ? 'line-through' : 'none';
+  if (statusEl) {
+    statusEl.textContent = status === 'done' ? '✓ Done'
+      : status === 'missed' ? '✕ Not done'
+      : status === 'skipped' ? '↷ Skipped' : 'Pending';
   }
+}
+
+function setSessionStatus(el, sess, status) {
+  sess.status = status;
+  sess.done = status === 'done';
+  applySessionStatus(el, sess);
 
   // Persist done states
   DB.set('schedule_sessions', DB.get('schedule_sessions', []).map(s => {
     if (s.day === sess.day && s.time === sess.time && s.subject === sess.subject) {
       s.done = sess.done;
+      s.status = sess.status;
     }
     return s;
   }));
@@ -375,6 +405,8 @@ if (dailyHoursInput && savedProfile.dailyHours) dailyHoursInput.value = savedPro
 if (collegeStartInput && savedProfile.collegeStart) collegeStartInput.value = savedProfile.collegeStart;
 if (collegeEndInput && savedProfile.collegeEnd) collegeEndInput.value = savedProfile.collegeEnd;
 if (studyWindowInput && savedProfile.studyWindow) studyWindowInput.value = savedProfile.studyWindow;
+if (busyStartInput && savedProfile.busyStart) busyStartInput.value = savedProfile.busyStart;
+if (busyEndInput && savedProfile.busyEnd) busyEndInput.value = savedProfile.busyEnd;
 
 const savedSessions = DB.get('schedule_sessions', []);
 if (savedSessions.length > 0) {

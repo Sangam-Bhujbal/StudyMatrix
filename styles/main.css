@@ -766,6 +766,30 @@ textarea.glass-input { resize: vertical; }
 .schedule-session.evening   { border-left: 3px solid #10b981; }
 .schedule-session.night     { border-left: 3px solid #6366f1; }
 
+.session-status {
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.schedule-session[data-status="done"] .session-status { color: #34d399; }
+.schedule-session[data-status="missed"] .session-status { color: #f87171; }
+.schedule-session[data-status="skipped"] .session-status { color: #fbbf24; }
+
+.session-action {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 0.375rem;
+  padding: 0.2rem 0.45rem;
+  color: #9ca3af;
+  font-size: 0.65rem;
+  transition: all 0.15s ease;
+}
+
+.session-action:hover {
+  color: #fff;
+  border-color: rgba(139,92,246,0.55);
+  background: rgba(139,92,246,0.12);
+}
+
 /* ══════════════════════════════════════════
    FINAL POLISH — Focus ring on interactive elements
 ══════════════════════════════════════════ */

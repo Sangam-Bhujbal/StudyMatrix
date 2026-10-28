@@ -728,9 +728,16 @@
                   <option value="night">Night</option>
                 </select>
               </label>
-              <label class="text-xs text-gray-400">4. Which subjects need priority?
-                <span class="block text-gray-600 mt-1">Add subjects below with weekly hours.</span>
+              <label class="text-xs text-gray-400">4. What other time are you busy?
+                <span class="flex gap-2 mt-1">
+                  <input id="schedule-busy-start" type="time" class="glass-input w-full" aria-label="Busy start time" />
+                  <input id="schedule-busy-end" type="time" class="glass-input w-full" aria-label="Busy end time" />
+                </span>
               </label>
+            </div>
+            <div class="mb-4">
+              <p class="text-xs text-gray-400 mb-2">5. Which subjects need priority?</p>
+              <p class="text-xs text-gray-600">Add each subject below with its weekly target hours.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
               <input id="schedule-subject" type="text" placeholder="Add subject (e.g. Physics)"

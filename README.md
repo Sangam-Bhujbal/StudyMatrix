@@ -28,7 +28,11 @@ cannot run the secure serverless endpoint.
 - Feynman explanation evaluator and notes-to-quiz generator
 - Context-aware Matrix AI chatbot
 - Bionic reading mode
-- Adaptive weekly schedule generator
+- Adaptive weekly schedule generator with a structured 5-question planner:
+  daily study target, college hours, preferred study window, other busy time,
+  and subject priorities. Generated sessions avoid busy periods and can be
+  marked **Done**, **Not done**, or **Skip**; status is saved locally so
+  students can manage the plan day by day.
 - Local login/demo session, JSON backup/import, and optional Supabase sync
 
 ## Run locally
