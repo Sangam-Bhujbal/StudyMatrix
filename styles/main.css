@@ -478,6 +478,26 @@ textarea.glass-input { resize: vertical; }
   color: #fca5a5;
 }
 
+.quiz-option.selected-option {
+  border-color: rgba(139,92,246,0.55);
+  background: rgba(139,92,246,0.1);
+  color: #fff;
+}
+
+.quiz-option:disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Word count badge sits inline above textarea */
+.word-count-badge {
+  display: block;
+  text-align: right;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
 /* ══════════════════════════════════════════
    SCHEDULE CARDS
 ══════════════════════════════════════════ */
