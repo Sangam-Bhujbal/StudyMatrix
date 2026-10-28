@@ -303,6 +303,13 @@ function speakChat(text) {
   synth.speak(utt);
 }
 
+document.getElementById('chatbot-voice-toggle')?.addEventListener('change', (event) => {
+  const enabled = event.target.checked;
+  if (!enabled) window.speechSynthesis?.cancel();
+  const status = document.getElementById('chatbot-voice-status');
+  if (status) status.textContent = enabled ? 'Voice replies on' : 'Voice replies off';
+});
+
 function scrollToBottom() {
   if (chatMessages) {
     chatMessages.scrollTop = chatMessages.scrollHeight;

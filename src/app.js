@@ -8,6 +8,7 @@ import './core/sync-manager.js';
 import './core/strict-timer.js';
 import './core/audio-mixer.js';
 import './core/voice-coach.js';
+import './core/focus-shield.js';
 import './features/1_onboarding.js';
 import './features/2_pdf-mindmap.js';
 import './features/3_feynman-quiz.js';
@@ -21,6 +22,7 @@ const TAB_META = {
   'tab-mindmap':   { title: 'AI Mind-Map',   subtitle: 'Syllabus to neural graph in seconds' },
   'tab-focus':     { title: 'Focus Timer',   subtitle: 'Strict terminal — no distractions' },
   'tab-timer':     { title: 'Focus Timer',   subtitle: 'Strict terminal — no distractions' },
+  'tab-sounds':    { title: 'Sound Lab',     subtitle: 'Ambient waves for deep focus' },
   'tab-feynman':   { title: 'Feynman Lab',   subtitle: 'Teach it to know it' },
   'tab-bionic':    { title: 'Bionic Reader', subtitle: 'Read faster with neural typography' },
   'tab-schedule':  { title: 'My Schedule',   subtitle: 'AI-adaptive study timetable' },

@@ -144,6 +144,11 @@ export function initAuthUI(bootApp) {
   const overlay = document.getElementById('guest-modal-overlay');
   const session = getSession();
 
+  document.getElementById('btn-logout')?.addEventListener('click', () => {
+    logout();
+    window.location.reload();
+  });
+
   if (session?.name) {
     bootApp(session);
     return;
@@ -203,11 +208,6 @@ export function initAuthUI(bootApp) {
     } catch (err) {
       showAuthError('register-error', err.message);
     }
-  });
-
-  document.getElementById('btn-logout')?.addEventListener('click', () => {
-    logout();
-    window.location.reload();
   });
 
   const credEmail = document.getElementById('demo-cred-email');

@@ -32,6 +32,9 @@ const tracks = {
   432:   { node: null, gain: null, playing: false },
   brown: { node: null, gain: null, playing: false },
   rain:  { node: null, gain: null, playing: false },
+  ocean: { node: null, gain: null, playing: false },
+  fire:  { node: null, gain: null, playing: false },
+  wind:  { node: null, gain: null, playing: false },
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -138,6 +141,7 @@ function createRain(ctx, gainNode) {
       data[i] = (b0+b1+b2+b3+b4+b5+b6 + white * 0.5362) * 0.11;
       b6 = white * 0.115926;
     }
+
   }
 
   const rainSource  = ctx.createBufferSource();
@@ -196,6 +200,33 @@ function createRain(ctx, gainNode) {
   };
 }
 
+function createAmbientNoise(ctx, gainNode, type) {
+  const bufferSize = ctx.sampleRate * 2;
+  const buffer = ctx.createBuffer(2, bufferSize, ctx.sampleRate);
+  for (let ch = 0; ch < 2; ch++) {
+    const data = buffer.getChannelData(ch);
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      const pulse = type === 'fire' && Math.random() > 0.995 ? Math.random() * 0.9 : 0;
+      data[i] = type === 'ocean'
+        ? white * (0.25 + 0.2 * Math.sin(i / 12000))
+        : type === 'wind'
+          ? white * 0.18
+          : white * 0.08 + pulse;
+    }
+  }
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  const filter = ctx.createBiquadFilter();
+  filter.type = type === 'wind' ? 'lowpass' : 'bandpass';
+  filter.frequency.setValueAtTime(type === 'ocean' ? 500 : type === 'fire' ? 1800 : 700, ctx.currentTime);
+  source.connect(filter);
+  filter.connect(gainNode);
+  source.start();
+  return { stop: () => { try { source.stop(); } catch (_) {} } };
+}
+
 // ═══════════════════════════════════════════════════════════
 // TOGGLE PLAY / STOP
 // ═══════════════════════════════════════════════════════════
@@ -228,6 +259,9 @@ function toggleTrack(trackId) {
     if (trackId === 432   || trackId === '432')   node = create432Hz(ctx, gainNode);
     if (trackId === 'brown')                       node = createBrownNoise(ctx, gainNode);
     if (trackId === 'rain')                        node = createRain(ctx, gainNode);
+    if (trackId === 'ocean' || trackId === 'fire' || trackId === 'wind') {
+      node = createAmbientNoise(ctx, gainNode, trackId);
+    }
 
     track.node    = node;
     track.gain    = gainNode;

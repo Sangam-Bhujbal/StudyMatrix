@@ -22,7 +22,9 @@ cannot run the secure serverless endpoint.
 - Chronotype onboarding for Morning Bird and Night Owl study patterns
 - AI mind-map generation from a topic, notes, or PDF
 - Strict focus timer with tab-switch breach detection
-- Dual audio mixer and optional browser voice coach
+- Sound Lab with 432Hz, brown noise, rain, ocean, fireplace, and wind waves
+- Full-screen Focus Shield with a live clock and one-button exit
+- Dual audio mixer, optional browser voice coach, and chatbot voice replies
 - Feynman explanation evaluator and notes-to-quiz generator
 - Context-aware Matrix AI chatbot
 - Bionic reading mode

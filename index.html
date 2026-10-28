@@ -229,6 +229,13 @@
           </svg>
           <span class="nav-label">Focus Timer</span>
         </a>
+        <a class="nav-link" data-tab="tab-sounds" href="#">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 18V5l12-2v13M9 18a3 3 0 11-6 0 3 3 0 016 0zm12-2a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span class="nav-label">Sound Lab</span>
+        </a>
         <a class="nav-link" data-tab="tab-feynman" href="#">
           <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -435,6 +442,9 @@
                   ↺ Reset
                 </button>
               </div>
+              <button id="btn-enter-shield" class="btn-secondary mt-4 text-sm">
+                ◼ Enter Focus Shield
+              </button>
 
               <!-- Tab-switch warning -->
               <div id="tab-switch-warning"
@@ -513,6 +523,28 @@
             <h4 class="font-semibold text-white mb-3">Session Log</h4>
             <div id="session-log" class="space-y-2 text-sm text-gray-400 max-h-40 overflow-y-auto">
               <p class="italic text-gray-600">No sessions yet. Start your first focus block!</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── TAB: Sound Lab ── -->
+        <section id="tab-sounds" class="workspace-panel hidden">
+          <div class="glass-card rounded-xl p-6">
+            <h3 class="font-bold text-white mb-1">Sound Lab</h3>
+            <p class="text-gray-400 text-sm mb-5">Mix multiple browser-generated ambient waves. No downloads or external audio files.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="audio-track" data-freq="ocean">
+                <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="ocean">▶</button><span class="text-sm font-medium text-white">Ocean Waves</span></div><span class="text-xs text-emerald font-mono" id="status-ocean">Stopped</span></div>
+                <input type="range" class="audio-slider" id="vol-ocean" min="0" max="1" step="0.01" value="0.3" />
+              </div>
+              <div class="audio-track" data-freq="fire">
+                <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="fire">▶</button><span class="text-sm font-medium text-white">Fireplace Crackle</span></div><span class="text-xs text-emerald font-mono" id="status-fire">Stopped</span></div>
+                <input type="range" class="audio-slider" id="vol-fire" min="0" max="1" step="0.01" value="0.25" />
+              </div>
+              <div class="audio-track" data-freq="wind">
+                <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="wind">▶</button><span class="text-sm font-medium text-white">Soft Wind</span></div><span class="text-xs text-emerald font-mono" id="status-wind">Stopped</span></div>
+                <input type="range" class="audio-slider" id="vol-wind" min="0" max="1" step="0.01" value="0.2" />
+              </div>
             </div>
           </div>
         </section>
@@ -782,9 +814,15 @@
         </div>
         <label class="ml-auto mr-2 flex items-center gap-1 text-[10px] text-gray-400" title="Speak replies">
           <input type="checkbox" id="chatbot-voice-toggle" class="accent-violet" />
-          Speak
+          <span id="chatbot-voice-status">Voice replies off</span>
         </label>
         <button id="chatbot-close" class="text-gray-500 hover:text-white text-lg">×</button>
+      </div>
+
+      <div id="focus-shield" class="focus-shield hidden" role="dialog" aria-modal="true" aria-label="Focus shield">
+        <div class="focus-shield-time" id="shield-clock">00:00:00</div>
+        <p class="text-gray-500 text-sm tracking-widest uppercase">Focus Shield</p>
+        <button id="btn-exit-shield" class="btn-secondary mt-8">Exit Shield</button>
       </div>
       <!-- Messages -->
       <div id="chatbot-messages"
