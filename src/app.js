@@ -12,8 +12,10 @@ import './core/voice-coach.js';
 import './features/1_onboarding.js';
 import './features/2_pdf-mindmap.js';
 import './features/3_feynman-quiz.js';
+import './features/4_chatbot.js';
+import './features/5_bionic-reader.js';
 
-console.log('%c[StudyMatrix] Bootstrap loaded — Phase 4 Ready 📝🧠', 'color:#8b5cf6;font-weight:bold;');
+console.log('%c[StudyMatrix] Bootstrap loaded — Phase 5 Complete 🚀', 'color:#8b5cf6;font-weight:bold;');
 
 // ── Tab Router ──────────────────────────────────────────────────────
 const NAV_LINKS   = document.querySelectorAll('.nav-link');

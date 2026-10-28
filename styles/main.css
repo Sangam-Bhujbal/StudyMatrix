@@ -674,3 +674,39 @@ textarea.glass-input { resize: vertical; }
 /* Prose overrides for bionic output */
 .prose-invert h1, .prose-invert h2, .prose-invert h3 { color: #f3f4f6; }
 .prose-invert p { margin: 0.5em 0; }
+
+/* ── Bionic Rest (non-bolded portion) ── */
+.bionic-rest {
+  font-weight: 400;
+  color: #d1d5db;
+}
+
+/* ── Chatbot Quick Reply Chips ── */
+.quick-chip {
+  font-family: inherit;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.quick-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(139,92,246,0.3);
+}
+
+/* ── Chatbot window flex layout ── */
+#chatbot-window {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Bionic controls panel ── */
+#bionic-controls button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ── Toast notifications ── */
+.sm-toast {
+  min-width: 240px;
+  max-width: 360px;
+}
