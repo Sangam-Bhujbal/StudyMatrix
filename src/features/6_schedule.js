@@ -159,7 +159,9 @@ function buildScheduleData(subjects, chronotype, profile = {}) {
     // Pick 2–4 slots per day (weekends slightly lighter)
     const isWeekend  = dayIdx >= 5;
     const targetSlots = Math.min(Math.ceil(dailyHours), slots.length);
-    const slotsToday = slots.slice(0, isWeekend ? Math.max(1, targetSlots - 1) : targetSlots);
+    const slotsToday = slots
+      .slice(0, isWeekend ? Math.max(1, targetSlots - 1) : targetSlots)
+      .sort((a, b) => timeToMinutes(a.time.slice(0, 5)) - timeToMinutes(b.time.slice(0, 5)));
 
     slotsToday.forEach((slot, si) => {
       // Rotate subjects round-robin weighted by hours
