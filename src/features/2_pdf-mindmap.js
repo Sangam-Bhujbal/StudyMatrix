@@ -160,10 +160,10 @@ async function renderMermaid(diagramSrc) {
     // Make SVG responsive
     const svgEl = div.querySelector('svg');
     if (svgEl) {
-      svgEl.style.maxWidth  = '100%';
-      svgEl.style.height    = 'auto';
-      svgEl.removeAttribute('width');
-      svgEl.removeAttribute('height');
+      svgEl.style.width = '100%';
+      svgEl.style.height = '300px';
+      svgEl.style.maxWidth = '100%';
+      svgEl.setAttribute('preserveAspectRatio', 'none');
     }
   } catch (renderErr) {
     // Fallback: show raw mermaid as code block
