@@ -6,10 +6,13 @@
 
 // ── Module Imports ──────────────────────────────────────────────────
 import './core/local-db.js';
+import './core/strict-timer.js';
+import './core/audio-mixer.js';
+import './core/voice-coach.js';
 import './features/1_onboarding.js';
 import './features/2_pdf-mindmap.js';
 
-console.log('%c[StudyMatrix] Bootstrap loaded — Phase 2 Ready 🧠', 'color:#8b5cf6;font-weight:bold;');
+console.log('%c[StudyMatrix] Bootstrap loaded — Phase 3 Ready ⏱🎵🗣', 'color:#8b5cf6;font-weight:bold;');
 
 // ── Tab Router ──────────────────────────────────────────────────────
 const NAV_LINKS   = document.querySelectorAll('.nav-link');
