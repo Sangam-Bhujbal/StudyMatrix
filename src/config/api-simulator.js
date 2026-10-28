@@ -16,6 +16,34 @@ const SIMULATED_DELAY_MS = 2000;
 // ═══════════════════════════════════════════════════════════
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+async function requestLiveAI(type, input) {
+  if (typeof window === 'undefined' || !window.fetch) return null;
+  try {
+    if (JSON.parse(window.localStorage.getItem('sm_use_simulator')) === true) return null;
+  } catch {
+    // Missing or malformed local preference means live mode may be attempted.
+  }
+  const response = await fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type, input }),
+  });
+  if (!response.ok) throw new Error(`AI endpoint returned ${response.status}`);
+  const payload = await response.json();
+  return payload.result || null;
+}
+
+async function liveOrFallback(type, input, fallback) {
+  try {
+    const live = await requestLiveAI(type, input);
+    if (live) return live;
+  } catch (error) {
+    console.warn(`[AI] ${type} unavailable; using demo fallback`, error.message);
+  }
+  await wait(SIMULATED_DELAY_MS);
+  return fallback();
+}
+
 // ═══════════════════════════════════════════════════════════
 // MOCK DATA BANK
 // ═══════════════════════════════════════════════════════════
@@ -326,12 +354,13 @@ export const CHATBOT_RESPONSES = {
  * @returns {Promise<{title, mermaid, nodeCount, depth}>}
  */
 export async function simulateMindMap(topic = 'default') {
-  await wait(SIMULATED_DELAY_MS);
-  const blob = String(topic || 'default').toLowerCase();
-  const key = Object.keys(MOCK_MINDMAPS).find(k => blob.includes(k)) || 'default';
-  const result = { ...MOCK_MINDMAPS[key] };
-  result.missing_concepts = result.missing_concepts || [];
-  return result;
+  return liveOrFallback('mindmap', String(topic || 'default'), () => {
+    const blob = String(topic || 'default').toLowerCase();
+    const key = Object.keys(MOCK_MINDMAPS).find(k => blob.includes(k)) || 'default';
+    const result = { ...MOCK_MINDMAPS[key] };
+    result.missing_concepts = result.missing_concepts || [];
+    return result;
+  });
 }
 
 /** Alias expected by newer feature wiring */
@@ -355,11 +384,12 @@ function toEvalPayload(raw) {
 }
 
 export async function simulateFeynmanEval(text = '') {
-  await wait(SIMULATED_DELAY_MS);
-  const words = text.trim().split(/\s+/).length;
-  if (words > 120) return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[2] });
-  if (words > 50)  return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[0] });
-  return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[1] });
+  return liveOrFallback('feynman', text, () => {
+    const words = text.trim().split(/\s+/).length;
+    if (words > 120) return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[2] });
+    if (words > 50)  return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[0] });
+    return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[1] });
+  });
 }
 
 export async function simulateFeynmanEvaluation(text = '') {
@@ -373,9 +403,10 @@ export async function simulateFeynmanEvaluation(text = '') {
  * @returns {Promise<{topic, questions[]}>}
  */
 export async function simulateQuizGeneration(notes = '') {
-  await wait(SIMULATED_DELAY_MS);
-  const set = MOCK_QUIZ_SETS[0];
-  return { topic: set.topic, questions: set.questions.slice(0, 3) };
+  return liveOrFallback('quiz', notes, () => {
+    const set = MOCK_QUIZ_SETS[0];
+    return { topic: set.topic, questions: set.questions.slice(0, 3) };
+  });
 }
 
 /**
@@ -386,17 +417,14 @@ export async function simulateQuizGeneration(notes = '') {
  * @returns {Promise<string>}
  */
 export async function simulateChatResponse(userMsg, activeTab) {
-  await wait(800); // Chatbot feels faster — 0.8s
-  const pool = CHATBOT_RESPONSES[activeTab] || CHATBOT_RESPONSES.default;
-
-  // Keyword-aware response selection
-  const msg = userMsg.toLowerCase();
-  if (msg.includes('help') || msg.includes('how'))  return pool[1] || pool[0];
-  if (msg.includes('tip')  || msg.includes('pro'))  return pool[2] || pool[0];
-  if (msg.includes('why')  || msg.includes('what')) return pool[3] || pool[0];
-
-  // Random pick from pool for variety
-  return pool[Math.floor(Math.random() * pool.length)];
+  return liveOrFallback('chat', { message: userMsg, activeTab }, () => {
+    const pool = CHATBOT_RESPONSES[activeTab] || CHATBOT_RESPONSES.default;
+    const msg = userMsg.toLowerCase();
+    if (msg.includes('help') || msg.includes('how')) return pool[1] || pool[0];
+    if (msg.includes('tip') || msg.includes('pro')) return pool[2] || pool[0];
+    if (msg.includes('why') || msg.includes('what')) return pool[3] || pool[0];
+    return pool[Math.floor(Math.random() * pool.length)];
+  });
 }
 
 console.log('[API Simulator] Simulation engine loaded — all AI calls mocked ✅');

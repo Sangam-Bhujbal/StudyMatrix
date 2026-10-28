@@ -10,6 +10,13 @@ This project can be deployed directly to GitHub Pages, Netlify, or Vercel.
 Connect the repository to one of those providers and use the repository root
 as the publish directory. No build command is required.
 
+For optional live Gemini responses, deploy on Vercel or Netlify and add
+`GEMINI_API_KEY` as a server-side environment variable. The browser calls
+`/api/ai`; if the key, endpoint, or Gemini service is unavailable, the app
+automatically uses its local demo responses. Never put the key in frontend
+JavaScript or commit it to GitHub. GitHub Pages supports the demo fallback but
+cannot run the secure serverless endpoint.
+
 ## Features
 
 - Chronotype onboarding for Morning Bird and Night Owl study patterns

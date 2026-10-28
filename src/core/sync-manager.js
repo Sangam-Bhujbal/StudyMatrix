@@ -43,7 +43,7 @@ export function saveCloudCredentials(url, key) {
 }
 
 export function isSimulatorEnabled() {
-  const flag = DB.get('use_simulator', true);
+  const flag = DB.get('use_simulator', false);
   return flag !== false;
 }
 
@@ -201,7 +201,7 @@ export function bindSettingsSyncUI() {
     simToggle.checked = isSimulatorEnabled();
     simToggle.addEventListener('change', () => {
       setSimulatorEnabled(simToggle.checked);
-      toast(simToggle.checked ? 'AI simulation ON (2s mock delay)' : 'Simulation OFF — still using mock fallback', 'info');
+      toast(simToggle.checked ? 'Demo fallback forced' : 'Live AI enabled when the server key is configured', 'info');
     });
   }
 

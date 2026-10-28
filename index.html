@@ -703,14 +703,14 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="glass-card rounded-xl p-6">
               <h3 class="font-bold text-white mb-1">AI Simulation</h3>
-              <p class="text-gray-400 text-sm mb-4">Hackathon-safe mock APIs (2.0s delay, then rich results).</p>
+              <p class="text-gray-400 text-sm mb-4">Uses secure Gemini when configured; falls back to demo data automatically.</p>
               <div class="flex items-center justify-between">
                 <div>
                   <p class="text-sm text-white">API simulation toggle</p>
-                  <p class="text-xs text-muted">Keep ON for judges — no keys required</p>
+                  <p class="text-xs text-muted">Turn ON to force reliable mock responses for a showcase</p>
                 </div>
                 <label class="toggle-switch">
-                  <input type="checkbox" id="toggle-api-sim" checked />
+                  <input type="checkbox" id="toggle-api-sim" />
                   <span class="toggle-track"></span>
                 </label>
               </div>
