@@ -149,7 +149,7 @@ async function renderMermaid(diagramSrc) {
   const renderId = `mmd-render-${Date.now()}`;
   const div = document.createElement('div');
   div.style.display = 'flex';
-  div.style.justifyContent = 'center';
+  div.style.justifyContent = 'flex-start';
   mermaidContainer.appendChild(div);
 
   try {
