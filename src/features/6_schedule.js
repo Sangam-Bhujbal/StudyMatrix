@@ -22,6 +22,10 @@ const btnGenSchedule    = document.getElementById('btn-generate-schedule');
 const scheduleLoading   = document.getElementById('schedule-loading');
 const scheduleOutput    = document.getElementById('schedule-output');
 const scheduleGrid      = document.getElementById('schedule-grid');
+const dailyHoursInput   = document.getElementById('schedule-daily-hours');
+const collegeStartInput = document.getElementById('schedule-college-start');
+const collegeEndInput   = document.getElementById('schedule-college-end');
+const studyWindowInput  = document.getElementById('schedule-study-window');
 
 // ── State ─────────────────────────────────────────────────────────
 let subjects = DB.get('schedule_subjects', []);
@@ -120,8 +124,32 @@ const NIGHT_SLOTS = [
  * Distributes subjects across days proportionally to their hours
  * Returns array of { day, time, label, subject, slot }
  */
-function buildScheduleData(subjects, chronotype) {
-  const slots    = chronotype === 'morning' ? MORNING_SLOTS : NIGHT_SLOTS;
+function timeToMinutes(value) {
+  const [hours, minutes] = value.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+function slotOverlapsCollege(time, collegeStart, collegeEnd) {
+  const start = timeToMinutes(time.slice(0, 5));
+  const end = timeToMinutes(time.slice(8, 13));
+  return start < collegeEnd && end > collegeStart;
+}
+
+function buildScheduleData(subjects, chronotype, profile = {}) {
+  const baseSlots = chronotype === 'morning' ? MORNING_SLOTS : NIGHT_SLOTS;
+  const window = profile.studyWindow || (chronotype === 'morning' ? 'morning' : 'night');
+  const collegeStart = timeToMinutes(profile.collegeStart || '09:00');
+  const collegeEnd = timeToMinutes(profile.collegeEnd || '16:00');
+  const dailyHours = Math.max(1, Number(profile.dailyHours) || 3);
+  const preferred = baseSlots.filter(slot => {
+    if (window === 'morning') return slot.slot === 'morning';
+    if (window === 'afternoon') return slot.slot === 'afternoon';
+    if (window === 'evening') return slot.slot === 'evening' || slot.slot === 'night';
+    return slot.slot === 'night';
+  });
+  const availableSlots = [...preferred, ...baseSlots.filter(slot => !preferred.includes(slot))]
+    .filter(slot => !slotOverlapsCollege(slot.time, collegeStart, collegeEnd));
+  const slots = availableSlots.length ? availableSlots : baseSlots;
   const sessions = [];
 
   // Total weekly hours requested
@@ -130,7 +158,8 @@ function buildScheduleData(subjects, chronotype) {
   DAYS.forEach((day, dayIdx) => {
     // Pick 2–4 slots per day (weekends slightly lighter)
     const isWeekend  = dayIdx >= 5;
-    const slotsToday = isWeekend ? slots.slice(0, 3) : slots.slice(0, Math.min(slots.length, 4));
+    const targetSlots = Math.min(Math.ceil(dailyHours), slots.length);
+    const slotsToday = slots.slice(0, isWeekend ? Math.max(1, targetSlots - 1) : targetSlots);
 
     slotsToday.forEach((slot, si) => {
       // Rotate subjects round-robin weighted by hours
@@ -168,7 +197,14 @@ async function generateSchedule() {
 
   const user      = DB.get('user', {});
   const chronotype = user.chronotype || 'morning';
-  const sessions  = buildScheduleData(subjects, chronotype);
+  const profile = {
+    dailyHours: dailyHoursInput?.value || 3,
+    collegeStart: collegeStartInput?.value || '09:00',
+    collegeEnd: collegeEndInput?.value || '16:00',
+    studyWindow: studyWindowInput?.value || (chronotype === 'morning' ? 'morning' : 'night'),
+  };
+  DB.set('schedule_profile', profile);
+  const sessions  = buildScheduleData(subjects, chronotype, profile);
 
   // Save to DB
   DB.set('schedule_sessions', sessions);
@@ -332,6 +368,12 @@ function printSchedule(sessions, chronotype) {
 }
 
 // ── Restore saved schedule on load ────────────────────────
+const savedProfile = DB.get('schedule_profile', {});
+if (dailyHoursInput && savedProfile.dailyHours) dailyHoursInput.value = savedProfile.dailyHours;
+if (collegeStartInput && savedProfile.collegeStart) collegeStartInput.value = savedProfile.collegeStart;
+if (collegeEndInput && savedProfile.collegeEnd) collegeEndInput.value = savedProfile.collegeEnd;
+if (studyWindowInput && savedProfile.studyWindow) studyWindowInput.value = savedProfile.studyWindow;
+
 const savedSessions = DB.get('schedule_sessions', []);
 if (savedSessions.length > 0) {
   const user = DB.get('user', {});

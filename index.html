@@ -701,8 +701,37 @@
           <div class="glass-card rounded-xl p-6 mb-4 border border-violet/20">
             <h3 class="font-bold text-white mb-1">Adaptive Study Schedule</h3>
             <p class="text-gray-400 text-sm mb-4">
-              AI generates a personalised daily timetable based on your chronotype and subjects.
+              Answer 4 quick questions and get a timetable that fits your college and daily study target.
             </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+              <label class="text-xs text-gray-400">1. How many hours can you study daily?
+                <select id="schedule-daily-hours" class="glass-input w-full mt-1">
+                  <option value="2">2 hours</option>
+                  <option value="3" selected>3 hours</option>
+                  <option value="4">4 hours</option>
+                  <option value="5">5 hours</option>
+                  <option value="6">6 hours</option>
+                  <option value="8">8 hours</option>
+                </select>
+              </label>
+              <label class="text-xs text-gray-400">2. What is your college timing?
+                <span class="flex gap-2 mt-1">
+                  <input id="schedule-college-start" type="time" value="09:00" class="glass-input w-full" aria-label="College start time" />
+                  <input id="schedule-college-end" type="time" value="16:00" class="glass-input w-full" aria-label="College end time" />
+                </span>
+              </label>
+              <label class="text-xs text-gray-400">3. When do you study best?
+                <select id="schedule-study-window" class="glass-input w-full mt-1">
+                  <option value="morning">Morning</option>
+                  <option value="afternoon">Afternoon</option>
+                  <option value="evening" selected>Evening</option>
+                  <option value="night">Night</option>
+                </select>
+              </label>
+              <label class="text-xs text-gray-400">4. Which subjects need priority?
+                <span class="block text-gray-600 mt-1">Add subjects below with weekly hours.</span>
+              </label>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
               <input id="schedule-subject" type="text" placeholder="Add subject (e.g. Physics)"
                      class="glass-input" />
