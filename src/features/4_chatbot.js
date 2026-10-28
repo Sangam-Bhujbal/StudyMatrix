@@ -112,6 +112,7 @@ function appendBubble(text, role = 'bot') {
   wrap.appendChild(bubble);
   chatMessages.appendChild(wrap);
   scrollToBottom();
+  if (role === 'bot') speakChat(text);
 
   // Increment unread if window is closed
   if (!isOpen && role === 'bot') {
@@ -283,6 +284,24 @@ const _origOpenChat = openChat;
 // ═══════════════════════════════════════════════════════════
 // UTILITY
 // ═══════════════════════════════════════════════════════════
+
+function speakChat(text) {
+  const enabled = document.getElementById('chatbot-voice-toggle')?.checked;
+  const synth = window.speechSynthesis;
+  if (!enabled || !synth) return;
+  if (synth.speaking) synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text.replace(/[📊🧠⏱🎯🎵📝🧪⚡🤖💡]/g, ''));
+  const selectedURI = document.getElementById('voice-select')?.value;
+  const voices = synth.getVoices();
+  utt.voice =
+    voices.find((v) => v.voiceURI === selectedURI) ||
+    voices.find((v) => /female/i.test(v.name) && v.lang.startsWith('en')) ||
+    voices.find((v) => v.lang.startsWith('en')) ||
+    voices[0] ||
+    null;
+  utt.rate = 1;
+  synth.speak(utt);
+}
 
 function scrollToBottom() {
   if (chatMessages) {

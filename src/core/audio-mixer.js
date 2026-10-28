@@ -42,28 +42,40 @@ const tracks = {
  * Create a 432Hz sine-wave oscillator node
  */
 function create432Hz(ctx, gainNode) {
-  const osc       = ctx.createOscillator();
-  osc.type        = 'sine';
-  osc.frequency.setValueAtTime(432, ctx.currentTime);
+  // Binaural 432Hz: left 428Hz, right 436Hz (8Hz beat) + quiet octave
+  const merger = ctx.createChannelMerger(2);
 
-  // Add gentle harmonics for richness
-  const osc2      = ctx.createOscillator();
-  osc2.type       = 'sine';
-  osc2.frequency.setValueAtTime(864, ctx.currentTime); // Octave
-  const harmGain  = ctx.createGain();
-  harmGain.gain.setValueAtTime(0.15, ctx.currentTime);
+  const left = ctx.createOscillator();
+  left.type = 'sine';
+  left.frequency.setValueAtTime(428, ctx.currentTime);
+  const leftGain = ctx.createGain();
+  leftGain.gain.setValueAtTime(0.7, ctx.currentTime);
+  left.connect(leftGain);
+  leftGain.connect(merger, 0, 0);
 
-  const merger    = ctx.createChannelMerger(2);
-  osc.connect(gainNode);
+  const right = ctx.createOscillator();
+  right.type = 'sine';
+  right.frequency.setValueAtTime(436, ctx.currentTime);
+  const rightGain = ctx.createGain();
+  rightGain.gain.setValueAtTime(0.7, ctx.currentTime);
+  right.connect(rightGain);
+  rightGain.connect(merger, 0, 1);
+
+  const osc2 = ctx.createOscillator();
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(864, ctx.currentTime);
+  const harmGain = ctx.createGain();
+  harmGain.gain.setValueAtTime(0.08, ctx.currentTime);
   osc2.connect(harmGain);
   harmGain.connect(gainNode);
 
-  osc.start();
+  merger.connect(gainNode);
+  left.start();
+  right.start();
   osc2.start();
 
-  // Return composite stopper
   return {
-    stop: () => { try { osc.stop(); osc2.stop(); } catch(_) {} },
+    stop: () => { try { left.stop(); right.stop(); osc2.stop(); } catch(_) {} },
   };
 }
 

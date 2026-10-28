@@ -710,3 +710,153 @@ textarea.glass-input { resize: vertical; }
   min-width: 240px;
   max-width: 360px;
 }
+
+/* ══════════════════════════════════════════
+   SCHEDULE MODULE
+══════════════════════════════════════════ */
+.schedule-day-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.schedule-day-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(139,92,246,0.15);
+}
+
+.schedule-session {
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.schedule-session:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(139,92,246,0.25);
+}
+
+.schedule-session.morning   { border-left: 3px solid #f59e0b; }
+.schedule-session.afternoon { border-left: 3px solid #8b5cf6; }
+.schedule-session.evening   { border-left: 3px solid #10b981; }
+.schedule-session.night     { border-left: 3px solid #6366f1; }
+
+/* ══════════════════════════════════════════
+   FINAL POLISH — Focus ring on interactive elements
+══════════════════════════════════════════ */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(139,92,246,0.7);
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
+
+/* Smooth page transitions */
+.workspace-panel {
+  animation: fadeIn 0.3s ease forwards;
+  will-change: opacity;
+}
+
+/* Stat card number pulse on update */
+@keyframes statPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); color: #a78bfa; }
+  100% { transform: scale(1); }
+}
+
+.stat-pop {
+  animation: statPop 0.4s ease;
+}
+
+/* AI badge pulse */
+.ai-badge {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Glass card active state for nav */
+.nav-link.active .nav-icon {
+  filter: drop-shadow(0 0 6px rgba(139,92,246,0.8));
+}
+
+.auth-tab-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  padding: 0.3rem;
+  border-radius: 0.75rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.auth-tab {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.4rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.auth-tab.active {
+  background: rgba(139,92,246,0.2);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(139,92,246,0.25);
+}
+
+.demo-cred-card {
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.25);
+}
+
+.demo-cred-card code {
+  font-family: 'JetBrains Mono', monospace;
+  color: #c4b5fd;
+}
+
+.voice-preset-btn {
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.voice-preset-btn.active {
+  border-color: var(--violet);
+  background: rgba(139,92,246,0.18);
+  color: #fff;
+}
+
+#cloud-sync-badge.sync-local {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.1);
+  color: #9ca3af;
+}
+
+#cloud-sync-badge.sync-cloud {
+  background: rgba(16,185,129,0.12);
+  border-color: rgba(16,185,129,0.35);
+  color: #34d399;
+}
+
+select.glass-input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #a78bfa 50%),
+                    linear-gradient(135deg, #a78bfa 50%, transparent 50%);
+  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}

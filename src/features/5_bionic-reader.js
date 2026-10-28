@@ -318,8 +318,18 @@ btnClear?.addEventListener('click', () => {
 });
 
 // Live stats update as user types (without full render)
+let bionicLiveTimer = null;
 bionicInput?.addEventListener('input', () => {
   updateStats(bionicInput.value);
+  clearTimeout(bionicLiveTimer);
+  bionicLiveTimer = setTimeout(() => {
+    const text = bionicInput.value;
+    currentPlainText = text;
+    if (text.trim().length > 8) {
+      injectControlsPanel();
+      renderBionic(text);
+    }
+  }, 220);
 });
 
 // ── Paste event: auto-convert on paste ─────────────────────

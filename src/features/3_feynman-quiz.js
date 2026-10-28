@@ -151,7 +151,8 @@ async function runFeynmanEvaluation() {
 
     // ── 7. Gaps list ──
     if (feynmanGaps) {
-      feynmanGaps.innerHTML = result.gaps
+      const gaps = result.gaps || result.missing_concepts || [];
+      feynmanGaps.innerHTML = gaps
         .map(g => `<li class="animate-fade-in">${g}</li>`)
         .join('');
     }

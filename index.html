@@ -14,6 +14,9 @@
   <!-- PDF.js for syllabus extraction -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
+  <!-- Supabase JS (optional cloud persistence) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- Custom Styles -->
   <link rel="stylesheet" href="styles/main.css" />
 
@@ -85,12 +88,19 @@
         </div>
       </div>
 
-      <p class="text-gray-400 text-sm mb-6 mt-3 leading-relaxed">
+      <p class="text-gray-400 text-sm mb-5 mt-3 leading-relaxed">
         Your AI-powered study command centre. Adaptive scheduling, mind-maps, focus timers, and more —
         all running 100% in your browser.
       </p>
 
-      <!-- ── Step 1: Name ── -->
+      <div class="auth-tab-row mb-5">
+        <button type="button" class="auth-tab active" data-auth="demo">Demo</button>
+        <button type="button" class="auth-tab" data-auth="login">Login</button>
+        <button type="button" class="auth-tab" data-auth="register">Register</button>
+      </div>
+
+      <!-- ── Demo / Guest onboarding ── -->
+      <div id="auth-panel-demo" class="auth-panel">
       <div id="onboarding-step-1" class="onboarding-step">
         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
           What should we call you?
@@ -121,12 +131,52 @@
         <button id="btn-enter-app"
                 class="w-full btn-primary opacity-50 cursor-not-allowed"
                 disabled>
-          Launch StudyMatrix →
+          Launch Guest Demo →
         </button>
+      </div>
+      </div>
+
+      <!-- ── Login ── -->
+      <div id="auth-panel-login" class="auth-panel hidden">
+        <div class="demo-cred-card mb-4">
+          <p class="text-[10px] uppercase tracking-widest text-violet font-semibold mb-1">Judge / test account</p>
+          <p class="text-sm text-white">Email: <code id="demo-cred-email">demo@studymatrix.app</code></p>
+          <p class="text-sm text-white">Password: <code id="demo-cred-pass">Demo@1234</code></p>
+          <button type="button" id="btn-fill-demo" class="btn-secondary text-xs mt-3 w-full">Fill demo credentials</button>
+        </div>
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Email</label>
+        <input id="login-email" type="email" autocomplete="username" placeholder="you@college.edu" class="glass-input w-full mb-3" />
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" class="glass-input w-full mb-3" />
+        <p id="login-error" class="hidden text-xs text-red-400 mb-3"></p>
+        <button type="button" id="btn-login" class="w-full btn-primary">Sign in</button>
+      </div>
+
+      <!-- ── Register ── -->
+      <div id="auth-panel-register" class="auth-panel hidden">
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Name</label>
+        <input id="reg-name" type="text" maxlength="32" placeholder="Your name" class="glass-input w-full mb-3" autocomplete="name" />
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Email</label>
+        <input id="reg-email" type="email" placeholder="you@college.edu" class="glass-input w-full mb-3" autocomplete="email" />
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Password</label>
+        <input id="reg-password" type="password" placeholder="Min 6 characters" class="glass-input w-full mb-3" autocomplete="new-password" />
+        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Chronotype</label>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <button type="button" class="chronotype-btn selected" data-type="morning">
+            <span class="text-2xl">🌅</span>
+            <span class="font-semibold">Morning Bird</span>
+          </button>
+          <button type="button" class="chronotype-btn" data-type="night">
+            <span class="text-2xl">🦉</span>
+            <span class="font-semibold">Night Owl</span>
+          </button>
+        </div>
+        <p id="register-error" class="hidden text-xs text-red-400 mb-3"></p>
+        <button type="button" id="btn-register" class="w-full btn-primary">Create account</button>
       </div>
 
       <p class="text-center text-xs text-gray-600 mt-4">
-        No account needed. Zero data leaves your device.
+        Guest demo needs no account. Login data stays in this browser unless you connect Supabase.
       </p>
     </div>
   </div>
@@ -172,7 +222,7 @@
           </svg>
           <span class="nav-label">Mind-Map</span>
         </a>
-        <a class="nav-link" data-tab="tab-timer" href="#">
+        <a class="nav-link" data-tab="tab-focus" href="#">
           <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -200,15 +250,24 @@
           </svg>
           <span class="nav-label">Schedule</span>
         </a>
+        <a class="nav-link" data-tab="tab-settings" href="#">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span class="nav-label">Settings</span>
+        </a>
       </nav>
 
       <!-- Sidebar Footer: Chronotype Badge -->
       <div class="px-3 pb-4 border-t border-white/5 pt-3">
         <div id="chronotype-badge"
-             class="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 text-xs text-gray-400">
+             class="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 text-xs text-gray-400 mb-2">
           <span id="chronotype-icon">🌅</span>
           <span id="chronotype-label">Morning Bird</span>
         </div>
+        <button id="btn-logout" class="w-full btn-secondary text-xs py-2">Log out</button>
       </div>
     </aside>
 
@@ -224,6 +283,10 @@
           <p id="workspace-subtitle" class="text-xs text-muted">Your study command centre</p>
         </div>
         <div class="flex items-center gap-3">
+          <div id="cloud-sync-badge"
+               class="sync-local px-3 py-1.5 rounded-full text-xs font-medium border">
+            💾 Local-Only Mode
+          </div>
           <!-- AI Status pill -->
           <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald/10 border border-emerald/20 text-emerald text-xs font-medium">
             <span class="w-2 h-2 rounded-full bg-emerald animate-pulse"></span>
@@ -272,7 +335,7 @@
               <button class="btn-primary text-sm" data-tab-link="tab-mindmap">
                 🧠 Generate Mind-Map
               </button>
-              <button class="btn-secondary text-sm" data-tab-link="tab-timer">
+              <button class="btn-secondary text-sm" data-tab-link="tab-focus">
                 ⏱ Start Focus Session
               </button>
               <button class="btn-secondary text-sm" data-tab-link="tab-feynman">
@@ -309,10 +372,15 @@
                 📄 Upload PDF Syllabus
                 <input id="pdf-upload" type="file" accept="application/pdf" class="hidden" />
               </label>
-              <button id="btn-demo-mindmap" class="btn-primary text-sm">
+              <button id="btn-generate-mindmap" class="btn-primary text-sm">
+                🧠 Generate Mind-Map
+              </button>
+              <button id="btn-demo-mindmap" class="btn-secondary text-sm">
                 ✨ Run Demo (No PDF needed)
               </button>
             </div>
+            <textarea id="mindmap-text" rows="3" placeholder="Or paste syllabus / notes here…"
+                      class="glass-input w-full mt-3 resize-none text-sm"></textarea>
             <!-- PDF filename display -->
             <p id="pdf-filename" class="text-xs text-muted mt-2 hidden"></p>
           </div>
@@ -330,7 +398,7 @@
               <h4 class="font-semibold text-white">Generated Mind-Map</h4>
               <span class="ai-badge">🤖 AI Generated</span>
             </div>
-            <div id="mermaid-container" class="mermaid-wrapper overflow-auto rounded-lg p-4 bg-obsidian-card">
+            <div id="mermaid-canvas" class="mermaid-wrapper overflow-auto rounded-lg p-4 bg-obsidian-card">
               <!-- Mermaid diagram rendered here -->
             </div>
           </div>
@@ -338,7 +406,7 @@
 
 
         <!-- ── TAB: Focus Timer ── -->
-        <section id="tab-timer" class="workspace-panel hidden">
+        <section id="tab-focus" class="workspace-panel hidden">
           <!-- Timer + Audio Mixer side by side -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
@@ -421,16 +489,21 @@
 
               <!-- Voice Coach Toggle -->
               <div class="mt-5 pt-4 border-t border-white/10">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between mb-3">
                   <div>
-                    <p class="text-sm font-medium text-white">AI Voice Coach</p>
-                    <p class="text-xs text-gray-500">Speaks when you lose focus or pause early</p>
+                    <p class="text-sm font-medium text-white">Goggins Voice Coach</p>
+                    <p class="text-xs text-gray-500">Male, female, and persona options — speaks on pause / tab switch</p>
                   </div>
                   <label class="toggle-switch">
                     <input type="checkbox" id="voice-coach-toggle" checked />
                     <span class="toggle-track"></span>
                   </label>
                 </div>
+                <p class="text-[10px] uppercase tracking-widest text-muted mb-2">Coach persona</p>
+                <div id="voice-preset-list" class="grid grid-cols-2 gap-2 mb-3"></div>
+                <label class="block text-xs text-muted mb-1">System voice (male / female)</label>
+                <select id="voice-select" class="glass-input w-full text-sm mb-2"></select>
+                <button type="button" id="btn-preview-voice" class="btn-secondary text-xs w-full">Preview voice</button>
               </div>
             </div>
           </div>
@@ -624,6 +697,59 @@
           </div>
         </section>
 
+
+        <!-- ── TAB: Settings ── -->
+        <section id="tab-settings" class="workspace-panel hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="glass-card rounded-xl p-6">
+              <h3 class="font-bold text-white mb-1">AI Simulation</h3>
+              <p class="text-gray-400 text-sm mb-4">Hackathon-safe mock APIs (2.0s delay, then rich results).</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm text-white">API simulation toggle</p>
+                  <p class="text-xs text-muted">Keep ON for judges — no keys required</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="toggle-api-sim" checked />
+                  <span class="toggle-track"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-xl p-6">
+              <h3 class="font-bold text-white mb-1">Cloud Sync Status</h3>
+              <p id="settings-sync-status" class="text-sm text-gray-400 mb-4">Local-Only Mode</p>
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Supabase URL</label>
+              <input id="supabase-url" type="url" placeholder="https://xxxx.supabase.co" class="glass-input w-full mb-3" />
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Anon / public key</label>
+              <input id="supabase-key" type="password" placeholder="eyJhbGciOi..." class="glass-input w-full mb-3" />
+              <button type="button" id="btn-save-supabase" class="btn-primary w-full">Save &amp; connect</button>
+              <p class="text-xs text-muted mt-3">Optional. If empty, everything stays in LocalStorage.</p>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-xl p-6 mt-4">
+            <h3 class="font-bold text-white mb-1">1-click backup</h3>
+            <p class="text-gray-400 text-sm mb-4">Export or import <code>studymatrix_backup.json</code> for multi-device portability.</p>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" id="btn-export-json" class="btn-primary">Export JSON</button>
+              <button type="button" id="btn-import-json" class="btn-secondary">Import JSON</button>
+              <input id="import-json-file" type="file" accept="application/json" class="hidden" />
+            </div>
+          </div>
+
+          <div class="glass-card rounded-xl p-6 mt-4 border border-amber-500/20">
+            <h3 class="font-bold text-white mb-1">Demo controls</h3>
+            <p class="text-gray-400 text-sm mb-4">
+              Reset this browser's StudyMatrix data before handing the demo to another person.
+              This does not affect the public repository.
+            </p>
+            <button type="button" id="btn-reset-demo" class="btn-secondary text-amber-300 border-amber-500/30">
+              Reset demo data
+            </button>
+          </div>
+        </section>
+
       </div><!-- /p-6 -->
     </main><!-- /main-workspace -->
 
@@ -654,7 +780,11 @@
           <p class="text-sm font-semibold text-white">Matrix AI</p>
           <p class="text-xs text-emerald">● Online</p>
         </div>
-        <button id="chatbot-close" class="ml-auto text-gray-500 hover:text-white text-lg">×</button>
+        <label class="ml-auto mr-2 flex items-center gap-1 text-[10px] text-gray-400" title="Speak replies">
+          <input type="checkbox" id="chatbot-voice-toggle" class="accent-violet" />
+          Speak
+        </label>
+        <button id="chatbot-close" class="text-gray-500 hover:text-white text-lg">×</button>
       </div>
       <!-- Messages -->
       <div id="chatbot-messages"

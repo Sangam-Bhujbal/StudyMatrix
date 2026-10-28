@@ -4,13 +4,14 @@
  * unlocks the main app shell. Full adaptive schedule generation in Phase 3.
  */
 import { DB } from '../core/local-db.js';
+import { createSession, initAuthUI } from '../core/auth.js';
 
 const overlay      = document.getElementById('guest-modal-overlay');
 const appShell     = document.getElementById('app-shell');
 const chatbot      = document.getElementById('chatbot-widget');
 const inputName    = document.getElementById('input-name');
 const enterBtn     = document.getElementById('btn-enter-app');
-const chronoBtns   = document.querySelectorAll('.chronotype-btn');
+const chronoBtns   = document.querySelectorAll('#onboarding-step-1 .chronotype-btn');
 const chronoBadge  = document.getElementById('chronotype-badge');
 const chronoIcon   = document.getElementById('chronotype-icon');
 const chronoLabel  = document.getElementById('chronotype-label');
@@ -19,14 +20,6 @@ const dashUser     = document.getElementById('dashboard-username');
 const dashPill     = document.getElementById('dash-chronotype-pill');
 
 let selectedType = null;
-
-// ── If user already onboarded, skip modal ──
-const saved = DB.get('user');
-if (saved?.name) {
-  bootApp(saved);
-} else {
-  overlay.classList.remove('hidden');
-}
 
 // ── Chronotype button selection ──
 chronoBtns.forEach(btn => {
@@ -39,27 +32,29 @@ chronoBtns.forEach(btn => {
 });
 
 // ── Name input validation ──
-inputName.addEventListener('input', validateForm);
+inputName?.addEventListener('input', validateForm);
 
 function validateForm() {
-  const valid = inputName.value.trim().length >= 2 && selectedType;
+  const valid = (inputName?.value || '').trim().length >= 2 && selectedType;
+  if (!enterBtn) return;
   enterBtn.disabled = !valid;
   enterBtn.classList.toggle('opacity-50',    !valid);
   enterBtn.classList.toggle('cursor-not-allowed', !valid);
 }
 
 // ── Enter app ──
-enterBtn.addEventListener('click', () => {
+enterBtn?.addEventListener('click', () => {
   const user = { name: inputName.value.trim(), chronotype: selectedType };
-  DB.set('user', user);
+  createSession(user, 'guest');
   bootApp(user);
 });
 
-function bootApp(user) {
+export function bootApp(user) {
   // Dismiss modal
   if (overlay) {
     overlay.style.transition = 'opacity 0.4s ease';
     overlay.style.opacity    = '0';
+    overlay.style.pointerEvents = 'none';
     setTimeout(() => overlay.classList.add('hidden'), 400);
   }
 
@@ -113,5 +108,7 @@ function seedSchedulePreview(type, name) {
     </div>
   `).join('');
 }
+
+initAuthUI(bootApp);
 
 console.log('[Onboarding] Module loaded');

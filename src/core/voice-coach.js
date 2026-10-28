@@ -1,179 +1,277 @@
 /**
- * voice-coach.js — AI Voice Coach via Web Speech API
- * ────────────────────────────────────────────────────
- * Listens to timer events and "speaks" contextual coaching
- * messages using the browser's native speechSynthesis API.
- *
- * Triggered by:
- *   sm:timerStart  → motivational start message
- *   sm:timerPause  → firm warning message
- *   sm:timerEnd    → congratulatory completion message
- *   sm:tabSwitch   → aggressive distraction warning
- *
- * The voice coach toggle (checkbox) in the UI enables/disables.
- * Voice selection: prefers a natural English voice if available.
+ * voice-coach.js — Multi-persona Web Speech API coach
+ * Voices: Goggins (male/intense), Mentor (female/calm), Drill, Zen
  */
 
-// ── DOM refs ──────────────────────────────────────────────
-const voiceToggle = document.getElementById('voice-coach-toggle');
+import { DB } from './local-db.js';
 
-// ── Speech API check ──────────────────────────────────────
+const voiceToggle  = document.getElementById('voice-coach-toggle');
+const voiceSelect  = document.getElementById('voice-select');
+const presetWrap   = document.getElementById('voice-preset-list');
+
 const synth = window.speechSynthesis;
 const isSpeechSupported = !!synth;
 
-// ── Voice preference ──────────────────────────────────────
+const PRESETS = {
+  goggins: {
+    label: 'Goggins',
+    gender: 'male',
+    rate: 1.08,
+    pitch: 0.82,
+    start: [
+      "Stay hard. Focus mode is on. You don't get to negotiate with discomfort. Lock in.",
+      "The clock is running. Most people quit when it gets quiet. You are not most people.",
+    ],
+    pause: [
+      "Why are you stopping? Get back to focus!",
+      "You paused already? That is weakness leaving — unless you hit resume right now.",
+      "Hey. Why did you stop? Get back in the chair and finish the block.",
+    ],
+    tabSwitch: [
+      "Focus breach! You ran from the work. Get back now.",
+      "You switched tabs. That is a breach. Come back and stay hard.",
+    ],
+    complete: [
+      "Block complete. That is how you build callouses on the mind. Take the break you earned.",
+    ],
+    shortBreak: [
+      "Short break. Stand up. Water. No phone. Then we go again.",
+    ],
+  },
+  mentor: {
+    label: 'Mentor',
+    gender: 'female',
+    rate: 0.98,
+    pitch: 1.12,
+    start: [
+      "Lovely. Focus is on. Breathe once, then give this block your full attention.",
+      "Session started. You already know what to do. I will keep you company without crowding you.",
+    ],
+    pause: [
+      "Why are you stopping? Get back to focus when you are ready — the work is still waiting.",
+      "A pause is fine if you need air. If not, let's resume together.",
+    ],
+    tabSwitch: [
+      "Focus breach noted. Gently come back to the page. You were doing well.",
+      "I saw the tab switch. No judgement — just return to the session.",
+    ],
+    complete: [
+      "Beautiful work. Session complete. Stretch, sip water, then we continue.",
+    ],
+    shortBreak: [
+      "Break time. Soften your shoulders. Look away from the screen.",
+    ],
+  },
+  drill: {
+    label: 'Drill',
+    gender: 'male',
+    rate: 1.15,
+    pitch: 0.9,
+    start: [
+      "Eyes forward. Timer live. No chatter. Execute.",
+      "Focus terminal is hot. You will stay on task until I say otherwise.",
+    ],
+    pause: [
+      "Why are you stopping? Get back to focus! That pause is unauthorized.",
+      "Negative. Resume immediately. We are not done.",
+    ],
+    tabSwitch: [
+      "Focus breach! Unauthorized tab. Return to station now.",
+      "You left your post. Get back to the material.",
+    ],
+    complete: [
+      "Time. Block complete. Hydrate. Reset. Next evolution shortly.",
+    ],
+    shortBreak: [
+      "Break. Five minutes. Move your body. Do not open socials.",
+    ],
+  },
+  zen: {
+    label: 'Zen',
+    gender: 'female',
+    rate: 0.9,
+    pitch: 1.05,
+    start: [
+      "Arrive here. The timer is a river — sit with it.",
+      "Begin. One breath, one task. Nothing else is required.",
+    ],
+    pause: [
+      "Why are you stopping? Get back to focus, or rest with intention — not with escape.",
+      "A pause can be mindful. If it is avoidance, return.",
+    ],
+    tabSwitch: [
+      "Attention wandered. That is a focus breach. Come home to the work.",
+      "The other tab is weather. Your session is the ground. Return.",
+    ],
+    complete: [
+      "The bell. You stayed. Rest without guilt.",
+    ],
+    shortBreak: [
+      "Open space. Stretch. Let the last block settle.",
+    ],
+  },
+};
+
 let preferredVoice = null;
+let allVoices = [];
+let activePreset = DB.get('voice_preset', 'goggins');
+let savedVoiceURI = DB.get('voice_uri', '');
+
+function genderOf(voice) {
+  const n = `${voice.name} ${voice.lang}`.toLowerCase();
+  if (/female|woman|samantha|victoria|karen|moira|tessa|zira|susan|fiona|serena|google uk english female/.test(n)) {
+    return 'female';
+  }
+  if (/male|david|daniel|mark|george|fred|google uk english male|alex/.test(n)) {
+    return 'male';
+  }
+  return 'neutral';
+}
+
+function pickVoiceForPreset(presetKey) {
+  const preset = PRESETS[presetKey] || PRESETS.goggins;
+  const wanted = preset.gender;
+  if (savedVoiceURI) {
+    const exact = allVoices.find((v) => v.voiceURI === savedVoiceURI);
+    if (exact) return exact;
+  }
+  return (
+    allVoices.find((v) => genderOf(v) === wanted && v.lang.startsWith('en')) ||
+    allVoices.find((v) => v.lang.startsWith('en')) ||
+    allVoices[0] ||
+    null
+  );
+}
+
+function populateVoiceSelect() {
+  if (!voiceSelect) return;
+  voiceSelect.innerHTML = '';
+  const groups = { female: [], male: [], neutral: [] };
+  allVoices.forEach((v) => groups[genderOf(v)].push(v));
+
+  ['female', 'male', 'neutral'].forEach((g) => {
+    if (!groups[g].length) return;
+    const og = document.createElement('optgroup');
+    og.label = g === 'female' ? 'Female voices' : g === 'male' ? 'Male voices' : 'Other voices';
+    groups[g].forEach((v) => {
+      const opt = document.createElement('option');
+      opt.value = v.voiceURI;
+      opt.textContent = `${v.name} (${v.lang})`;
+      if (savedVoiceURI ? v.voiceURI === savedVoiceURI : preferredVoice && v.voiceURI === preferredVoice.voiceURI) {
+        opt.selected = true;
+      }
+      og.appendChild(opt);
+    });
+    voiceSelect.appendChild(og);
+  });
+}
 
 function loadVoices() {
-  const voices = synth.getVoices();
-  // Priority: Google UK English Female → Google US English → any English
-  preferredVoice =
-    voices.find(v => v.name.includes('Google UK English Female')) ||
-    voices.find(v => v.name.includes('Google US English Female')) ||
-    voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female')) ||
-    voices.find(v => v.lang.startsWith('en')) ||
-    voices[0] ||
-    null;
+  if (!isSpeechSupported) return;
+  allVoices = synth.getVoices();
+  preferredVoice = pickVoiceForPreset(activePreset);
+  populateVoiceSelect();
 }
 
 if (isSpeechSupported) {
-  // Voices load async in most browsers
   synth.onvoiceschanged = loadVoices;
   loadVoices();
 }
 
-// ═══════════════════════════════════════════════════════════
-// SCRIPT BANKS — categorised coach messages
-// ═══════════════════════════════════════════════════════════
-
-const SCRIPTS = {
-  start: [
-    "Focus mode activated. You've got this. Distractions are the enemy. Let's lock in.",
-    "Session started. Close every tab you don't need. Your future self is counting on you right now.",
-    "Deep work initiated. Remember — every minute of focus compounds. Stay locked.",
-    "The timer is running. No phone. No social media. Just you and the work. Let's go.",
-  ],
-
-  pause: [
-    "Hey. Why did you pause? You're breaking your flow state. Every pause costs you 23 minutes of recovery. Resume now.",
-    "Paused already? Champions don't pause when things get hard. Get back in there.",
-    "You stopped. That's okay — but only if it's a genuine emergency. If it's not, hit resume right now.",
-    "Pausing early is the number one focus killer. You had momentum. Don't lose it. Resume the session.",
-  ],
-
-  tabSwitch: [
-    "Focus breach detected! You switched tabs. That's a distraction. Return to your study immediately.",
-    "Hey! Where are you going? You are in a focus session. Come back right now!",
-    "Tab switch detected. Every time you switch, your brain needs time to refocus. Stop. Come back.",
-    `Attention! You have left your study session ${'{count}'} time${'{plural}'}. This is costing you your goals.`,
-  ],
-
-  complete: [
-    "Session complete! Outstanding work. You just earned a genuine break. Be proud of that focused effort.",
-    "Timer complete. You stayed locked in and that is how champions are built. Well done.",
-    "Brilliant work. Session finished. Take a short break, hydrate, and come back even stronger.",
-    "That's a completed focus block. You are one step closer to mastery. Rest well and return ready.",
-  ],
-
-  shortBreak: [
-    "Short break started. Step away from the screen. Stretch your body. Hydrate. Don't check social media.",
-    "Break time. Get up. Move around. Your brain is consolidating what you just learned. Protect this time.",
-  ],
-};
-
-// ═══════════════════════════════════════════════════════════
-// SPEECH FUNCTION
-// ═══════════════════════════════════════════════════════════
-
-/**
- * Speaks a message using the Web Speech API
- * @param {string} text - message to speak
- * @param {object} options - rate, pitch, volume overrides
- */
 function speak(text, options = {}) {
-  if (!isSpeechSupported)              return;
-  if (!voiceToggle?.checked)           return;
-  if (synth.speaking)                  synth.cancel(); // Interrupt prev
+  if (!isSpeechSupported) return;
+  if (!voiceToggle?.checked) return;
+  if (synth.speaking) synth.cancel();
 
-  const utt           = new SpeechSynthesisUtterance(text);
-  utt.voice           = preferredVoice;
-  utt.rate            = options.rate   ?? 1.0;
-  utt.pitch           = options.pitch  ?? 1.0;
-  utt.volume          = options.volume ?? 0.95;
-  utt.lang            = 'en-US';
-
+  const preset = PRESETS[activePreset] || PRESETS.goggins;
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.voice = preferredVoice;
+  utt.rate = options.rate ?? preset.rate;
+  utt.pitch = options.pitch ?? preset.pitch;
+  utt.volume = options.volume ?? 0.95;
+  utt.lang = preferredVoice?.lang || 'en-US';
   synth.speak(utt);
 }
 
-/**
- * Pick a random script from a category
- * @param {string} category
- * @param {object} vars - template variables (e.g. {count, plural})
- */
-function pickScript(category, vars = {}) {
-  const pool = SCRIPTS[category] || SCRIPTS.start;
-  let   msg  = pool[Math.floor(Math.random() * pool.length)];
-
-  // Template replacement
-  Object.entries(vars).forEach(([k, v]) => {
-    msg = msg.replaceAll(`{${k}}`, v);
-  });
-
-  return msg;
+function pickScript(category) {
+  const preset = PRESETS[activePreset] || PRESETS.goggins;
+  const pool = preset[category] || PRESETS.goggins[category];
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
-// ═══════════════════════════════════════════════════════════
-// EVENT LISTENERS
-// ═══════════════════════════════════════════════════════════
+function setPreset(key) {
+  if (!PRESETS[key]) return;
+  activePreset = key;
+  DB.set('voice_preset', key);
+  preferredVoice = pickVoiceForPreset(key);
+  document.querySelectorAll('.voice-preset-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.preset === key);
+  });
+}
 
-// Timer started
+function bindPresetButtons() {
+  if (!presetWrap) return;
+  presetWrap.innerHTML = Object.entries(PRESETS).map(([key, p]) => `
+    <button type="button" class="voice-preset-btn ${key === activePreset ? 'active' : ''}" data-preset="${key}">
+      ${p.label}
+      <span class="block text-[10px] opacity-70">${p.gender === 'female' ? '♀ Female' : '♂ Male'}</span>
+    </button>
+  `).join('');
+  presetWrap.querySelectorAll('.voice-preset-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setPreset(btn.dataset.preset);
+      speak(`${PRESETS[btn.dataset.preset].label} coach ready.`, {});
+    });
+  });
+}
+
+voiceSelect?.addEventListener('change', () => {
+  savedVoiceURI = voiceSelect.value;
+  DB.set('voice_uri', savedVoiceURI);
+  preferredVoice = allVoices.find((v) => v.voiceURI === savedVoiceURI) || preferredVoice;
+  speak('Voice selected. I will coach you in this voice.', {});
+});
+
 document.addEventListener('sm:timerStart', (e) => {
-  const { mode } = e.detail;
-  if (mode === 'short') {
-    speak(pickScript('shortBreak'), { rate: 0.95, pitch: 1.05 });
-  } else {
-    speak(pickScript('start'), { rate: 1.0, pitch: 1.0 });
-  }
+  const { mode } = e.detail || {};
+  speak(pickScript(mode === 'short' ? 'shortBreak' : 'start'));
 });
 
-// Timer paused early
 document.addEventListener('sm:timerPause', (e) => {
-  const { remainingSeconds } = e.detail;
-  // Only yell if significant time is remaining (> 2 minutes)
-  if (remainingSeconds > 120) {
-    speak(pickScript('pause'), { rate: 1.05, pitch: 0.95, volume: 1.0 });
+  if ((e.detail?.remainingSeconds || 0) > 120) {
+    speak(pickScript('pause'));
   }
 });
 
-// Timer completed
 document.addEventListener('sm:timerEnd', (e) => {
-  const { mode } = e.detail;
-  if (mode === 'short') return; // No speech on break end
-  speak(pickScript('complete'), { rate: 0.95, pitch: 1.1 });
+  if (e.detail?.mode === 'short') return;
+  speak(pickScript('complete'));
 });
 
-// Tab switch during session — most aggressive
-document.addEventListener('sm:tabSwitch', (e) => {
-  const count  = e.detail.count || 1;
-  const plural = count > 1 ? 's' : '';
-  const msg    = pickScript('tabSwitch', { count, plural });
-  speak(msg, { rate: 1.1, pitch: 0.9, volume: 1.0 });
+document.addEventListener('sm:tabSwitch', () => {
+  speak(pickScript('tabSwitch'));
 });
 
-// ── Voice test on toggle enable ───────────────────────────
 voiceToggle?.addEventListener('change', () => {
-  if (voiceToggle.checked) {
-    speak("Voice coach activated. I will keep you focused.", { rate: 1.0, pitch: 1.05 });
-  } else {
-    synth.cancel();
+  if (voiceToggle.checked) speak('Voice coach activated. I will keep you focused.');
+  else synth.cancel();
+});
+
+document.getElementById('btn-preview-voice')?.addEventListener('click', () => {
+  const prev = voiceToggle?.checked;
+  if (voiceToggle) voiceToggle.checked = true;
+  speak('Why are you stopping? Get back to focus!');
+  if (voiceToggle && prev === false) {
+    setTimeout(() => { voiceToggle.checked = false; }, 2500);
   }
 });
 
-// ── Export ────────────────────────────────────────────────
+bindPresetButtons();
+
 export { speak };
 
 if (!isSpeechSupported) {
   console.warn('[VoiceCoach] speechSynthesis not supported in this browser');
 } else {
-  console.log('[VoiceCoach] Web Speech API voice coach loaded ✅');
+  console.log('[VoiceCoach] Multi-voice coach loaded ✅');
 }

@@ -19,10 +19,13 @@ const pdfFilenameEl     = document.getElementById('pdf-filename');
 const btnDemoMindmap    = document.getElementById('btn-demo-mindmap');
 const mindmapLoading    = document.getElementById('mindmap-loading');
 const mindmapOutput     = document.getElementById('mindmap-output');
-const mermaidContainer  = document.getElementById('mermaid-container');
+const mermaidContainer  = document.getElementById('mermaid-canvas')
+  || document.getElementById('mermaid-container');
+const btnGenerateMindmap = document.getElementById('btn-generate-mindmap');
+const mindmapTextInput   = document.getElementById('mindmap-text');
 
 // ── Mermaid init ────────────────────────────────────────────
-mermaid.initialize({
+window.mermaid?.initialize({
   startOnLoad:  false,
   theme:        'dark',
   themeVariables: {
@@ -99,7 +102,7 @@ async function generateMindMap(topic = 'default', label = 'document') {
   // 1 — Show loading, hide output
   mindmapLoading?.classList.remove('hidden');
   mindmapOutput?.classList.add('hidden');
-  mermaidContainer.innerHTML = '';
+  if (mermaidContainer) mermaidContainer.innerHTML = '';
 
   // 2 — Update loading text
   const loadingText = mindmapLoading?.querySelector('p:first-of-type');
@@ -139,19 +142,18 @@ async function generateMindMap(topic = 'default', label = 'document') {
  * @param {string} diagramSrc - Mermaid diagram source
  */
 async function renderMermaid(diagramSrc) {
-  // Clear previous
+  if (!mermaidContainer) throw new Error('Mind-map canvas missing');
   mermaidContainer.innerHTML = '';
 
-  // Create a unique ID for this render
-  const id  = `mermaid-${Date.now()}`;
+  const renderId = `mmd-render-${Date.now()}`;
   const div = document.createElement('div');
-  div.id    = id;
   div.style.display = 'flex';
   div.style.justifyContent = 'center';
   mermaidContainer.appendChild(div);
 
   try {
-    const { svg } = await mermaid.render(id, diagramSrc);
+    if (!window.mermaid) throw new Error('Mermaid CDN not loaded');
+    const { svg } = await window.mermaid.render(renderId, diagramSrc);
     div.innerHTML = svg;
 
     // Make SVG responsive
@@ -267,6 +269,12 @@ btnDemoMindmap?.addEventListener('click', async () => {
     pdfFilenameEl.classList.remove('hidden');
   }
   await generateMindMap('default', 'demo syllabus');
+});
+
+btnGenerateMindmap?.addEventListener('click', async () => {
+  const text = mindmapTextInput?.value.trim() || '';
+  const topic = text ? detectTopic(text) : 'default';
+  await generateMindMap(topic, text ? 'pasted syllabus' : 'demo syllabus');
 });
 
 // ── Load saved stats on init ─────────────────────────────

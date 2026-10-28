@@ -9,7 +9,7 @@
  * mock return inside each function with a real fetch() call.
  */
 
-const SIMULATED_DELAY_MS = 2500;
+const SIMULATED_DELAY_MS = 2000;
 
 // ═══════════════════════════════════════════════════════════
 // UTILITY — promise-based delay
@@ -24,196 +24,107 @@ const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const MOCK_MINDMAPS = {
   default: {
     title: 'Computer Science Fundamentals',
-    mermaid: `mindmap
-  root((CS Fundamentals))
-    Data Structures
-      Arrays & Strings
-        Dynamic Arrays
-        String Manipulation
-      Linked Lists
-        Singly Linked
-        Doubly Linked
-        Circular
-      Trees
-        Binary Search Tree
-        AVL Tree
-        Red-Black Tree
-        Heap / Priority Queue
-      Graphs
-        BFS Traversal
-        DFS Traversal
-        Dijkstra Algorithm
-        A* Pathfinding
-      Hash Tables
-        Collision Handling
-        Open Addressing
-        Chaining
-    Algorithms
-      Sorting
-        Quick Sort O(n log n)
-        Merge Sort O(n log n)
-        Heap Sort O(n log n)
-        Counting Sort O(n+k)
-      Searching
-        Binary Search
-        Linear Search
-        Interpolation Search
-      Dynamic Programming
-        Memoization
-        Tabulation
-        Classic Problems
-      Divide & Conquer
-        Recursion Trees
-        Master Theorem
-    Computer Architecture
-      CPU Pipeline
-        Fetch Decode Execute
-        Branch Prediction
-        Out-of-Order Exec
-      Memory Hierarchy
-        L1 L2 L3 Cache
-        Virtual Memory
-        Paging & Segmentation
-      Parallelism
-        Threads vs Processes
-        Mutex & Semaphores
-        Lock-Free Structures
-    Operating Systems
-      Process Management
-        Scheduling Algorithms
-        Context Switching
-        Deadlock Prevention
-      File Systems
-        Inodes & Blocks
-        Journaling
-        B-Tree Index
-      Networking Basics
-        TCP/IP Stack
-        HTTP & HTTPS
-        Socket Programming`,
+    mermaid: `graph TD
+  ROOT["CS Fundamentals"]
+  ROOT --> DS["Data Structures"]
+  ROOT --> ALG["Algorithms"]
+  ROOT --> ARCH["Computer Architecture"]
+  ROOT --> OS["Operating Systems"]
+  DS --> ARR["Arrays & Strings"]
+  DS --> LL["Linked Lists"]
+  DS --> TR["Trees"]
+  DS --> GR["Graphs"]
+  DS --> HT["Hash Tables"]
+  ARR --> DA["Dynamic Arrays"]
+  ARR --> SM["String Manipulation"]
+  LL --> SLL["Singly Linked"]
+  LL --> DLL["Doubly Linked"]
+  TR --> BST["Binary Search Tree"]
+  TR --> AVL["AVL Tree"]
+  TR --> HEAP["Heap / Priority Queue"]
+  GR --> BFS["BFS Traversal"]
+  GR --> DFS["DFS Traversal"]
+  GR --> DIJ["Dijkstra Algorithm"]
+  HT --> COL["Collision Handling"]
+  HT --> OA["Open Addressing"]
+  ALG --> SORT["Sorting"]
+  ALG --> SRCH["Searching"]
+  ALG --> DP["Dynamic Programming"]
+  ALG --> DAC["Divide & Conquer"]
+  SORT --> QS["Quick Sort"]
+  SORT --> MS["Merge Sort"]
+  SRCH --> BS["Binary Search"]
+  DP --> MEMO["Memoization"]
+  DP --> TAB["Tabulation"]
+  ARCH --> CPU["CPU Pipeline"]
+  ARCH --> MEM["Memory Hierarchy"]
+  ARCH --> PAR["Parallelism"]
+  CPU --> FDE["Fetch Decode Execute"]
+  MEM --> CACHE["L1 L2 L3 Cache"]
+  OS --> PROC["Process Management"]
+  OS --> FS["File Systems"]
+  OS --> NET["Networking"]
+  PROC --> SCHED["Scheduling Algorithms"]
+  NET --> TCP["TCP/IP Stack"]`,
     nodeCount: 47,
     depth: 4,
   },
 
   physics: {
     title: 'Classical & Modern Physics',
-    mermaid: `mindmap
-  root((Physics))
-    Classical Mechanics
-      Kinematics
-        Equations of Motion
-        Projectile Motion
-        Circular Motion
-      Newton's Laws
-        Inertia
-        F = ma
-        Action-Reaction
-      Energy & Work
-        Kinetic Energy
-        Potential Energy
-        Conservation Laws
-      Rotational Motion
-        Torque
-        Angular Momentum
-        Moment of Inertia
-    Thermodynamics
-      Laws of Thermodynamics
-        Zeroth Law
-        First Law
-        Second Law
-        Third Law
-      Heat Engines
-        Carnot Cycle
-        Efficiency
-      Entropy
-        Disorder Concept
-        Arrow of Time
-    Electromagnetism
-      Electric Fields
-        Coulomb's Law
-        Gauss's Law
-        Electric Potential
-      Magnetic Fields
-        Biot-Savart Law
-        Ampere's Law
-        Faraday's Law
-      Maxwell's Equations
-        Wave Equations
-        Speed of Light
-    Modern Physics
-      Special Relativity
-        Time Dilation
-        Length Contraction
-        E = mc²
-      Quantum Mechanics
-        Wave-Particle Duality
-        Heisenberg Uncertainty
-        Schrödinger Equation
-        Quantum Tunnelling
-      Nuclear Physics
-        Radioactive Decay
-        Fission & Fusion
-        Half-Life`,
+    mermaid: `graph TD
+  ROOT["Physics"]
+  ROOT --> CM["Classical Mechanics"]
+  ROOT --> TH["Thermodynamics"]
+  ROOT --> EM["Electromagnetism"]
+  ROOT --> MP["Modern Physics"]
+  CM --> KIN["Kinematics"]
+  CM --> NL["Newton's Laws"]
+  CM --> EW["Energy & Work"]
+  CM --> ROT["Rotational Motion"]
+  KIN --> EOM["Equations of Motion"]
+  KIN --> PROJ["Projectile Motion"]
+  NL --> FMA["F = ma"]
+  EW --> KE["Kinetic Energy"]
+  EW --> PE["Potential Energy"]
+  TH --> LAWS["Laws of Thermodynamics"]
+  TH --> ENG["Heat Engines"]
+  TH --> ENT["Entropy"]
+  EM --> EF["Electric Fields"]
+  EM --> MF["Magnetic Fields"]
+  EM --> MX["Maxwell's Equations"]
+  MP --> REL["Special Relativity"]
+  MP --> QM["Quantum Mechanics"]
+  MP --> NUC["Nuclear Physics"]
+  REL --> EMC["E = mc²"]
+  QM --> SCH["Schrödinger Equation"]`,
     nodeCount: 52,
     depth: 4,
   },
 
   biology: {
     title: 'Cell Biology & Genetics',
-    mermaid: `mindmap
-  root((Biology))
-    Cell Biology
-      Cell Structure
-        Nucleus
-        Mitochondria
-        Endoplasmic Reticulum
-        Golgi Apparatus
-        Ribosomes
-        Lysosomes
-      Cell Division
-        Mitosis
-          Prophase
-          Metaphase
-          Anaphase
-          Telophase
-        Meiosis
-          Meiosis I
-          Meiosis II
-          Crossing Over
-      Cell Signalling
-        Receptor Proteins
-        Signal Cascades
-        Apoptosis
-    Genetics
-      DNA Structure
-        Double Helix
-        Base Pairing
-        Nucleotides
-      Gene Expression
-        Transcription
-        Translation
-        Post-Translation
-      Inheritance
-        Mendel's Laws
-        Dominant Recessive
-        Codominance
-        Sex-Linked Traits
-      Mutations
-        Point Mutations
-        Frameshift
-        Chromosomal
-    Evolution
-      Natural Selection
-        Variation
-        Fitness
-        Adaptation
-      Speciation
-        Allopatric
-        Sympatric
-      Evidence
-        Fossil Record
-        Comparative Anatomy
-        Molecular Evidence`,
+    mermaid: `graph TD
+  ROOT["Biology"]
+  ROOT --> CB["Cell Biology"]
+  ROOT --> GEN["Genetics"]
+  ROOT --> EVO["Evolution"]
+  CB --> STR["Cell Structure"]
+  CB --> DIV["Cell Division"]
+  CB --> SIG["Cell Signalling"]
+  STR --> NUC["Nucleus"]
+  STR --> MIT["Mitochondria"]
+  DIV --> MITO["Mitosis"]
+  DIV --> MEI["Meiosis"]
+  GEN --> DNA["DNA Structure"]
+  GEN --> EXP["Gene Expression"]
+  GEN --> INH["Inheritance"]
+  DNA --> HELIX["Double Helix"]
+  EXP --> TX["Transcription"]
+  EXP --> TL["Translation"]
+  INH --> MEN["Mendel's Laws"]
+  EVO --> NS["Natural Selection"]
+  EVO --> SP["Speciation"]`,
     nodeCount: 55,
     depth: 4,
   },
@@ -367,6 +278,18 @@ export const CHATBOT_RESPONSES = {
     "Try layering Brown Noise + 432Hz for the ultimate deep work soundscape. Many top performers swear by it!",
     "Your audio mixer uses the Web Audio API — all synthesised locally, no downloads needed! 🎵",
   ],
+  'tab-focus': [
+    "Focus Terminal is live. Pick a coach voice — Goggins, Mentor, Drill, or Zen — then start the radial timer.",
+    "Tab-switch detection logs a Focus Breach. Come back immediately if you leave mid-session.",
+    "Layer 432Hz binaural tones with rain for a dual-audio flow state.",
+    "Pause early and the selected coach will call you out. Stay in the chair.",
+  ],
+  'tab-settings': [
+    "Settings is your backup bay: export JSON, import on another device, or plug in Supabase for cloud sync.",
+    "Without a Supabase URL and anon key, StudyMatrix stays 100% Local-Only — that's the demo-safe default.",
+    "Keep AI Simulation ON for hackathon demos so every feature returns rich mock results after 2 seconds.",
+    "Demo login is demo@studymatrix.app / Demo@1234 if a judge needs a saved account.",
+  ],
   'tab-feynman': [
     "The Feynman Technique: if you can't explain it simply, you don't understand it yet. This module finds the gaps! 📝",
     "Type your explanation as if you're teaching a 10-year-old. The AI will find concepts you glossed over.",
@@ -404,8 +327,16 @@ export const CHATBOT_RESPONSES = {
  */
 export async function simulateMindMap(topic = 'default') {
   await wait(SIMULATED_DELAY_MS);
-  const key = Object.keys(MOCK_MINDMAPS).find(k => topic.toLowerCase().includes(k)) || 'default';
-  return { ...MOCK_MINDMAPS[key] };
+  const blob = String(topic || 'default').toLowerCase();
+  const key = Object.keys(MOCK_MINDMAPS).find(k => blob.includes(k)) || 'default';
+  const result = { ...MOCK_MINDMAPS[key] };
+  result.missing_concepts = result.missing_concepts || [];
+  return result;
+}
+
+/** Alias expected by newer feature wiring */
+export async function simulateMindmapGeneration(text = '') {
+  return simulateMindMap(text);
 }
 
 /**
@@ -414,13 +345,25 @@ export async function simulateMindMap(topic = 'default') {
  * @param {string} text - the user's explanation text
  * @returns {Promise<{accuracy, grade, verdict, strengths, gaps, resources}>}
  */
+function toEvalPayload(raw) {
+  return {
+    ...raw,
+    score: raw.accuracy,
+    missing_concepts: raw.gaps,
+    suggestions: raw.resources,
+  };
+}
+
 export async function simulateFeynmanEval(text = '') {
   await wait(SIMULATED_DELAY_MS);
-  // Pick result based on word count (more words = higher score for realism)
   const words = text.trim().split(/\s+/).length;
-  if (words > 120)       return { ...MOCK_FEYNMAN_EVALS[2] }; // A+
-  else if (words > 50)   return { ...MOCK_FEYNMAN_EVALS[0] }; // A
-  else                   return { ...MOCK_FEYNMAN_EVALS[1] }; // B+
+  if (words > 120) return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[2] });
+  if (words > 50)  return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[0] });
+  return toEvalPayload({ ...MOCK_FEYNMAN_EVALS[1] });
+}
+
+export async function simulateFeynmanEvaluation(text = '') {
+  return simulateFeynmanEval(text);
 }
 
 /**
@@ -431,7 +374,8 @@ export async function simulateFeynmanEval(text = '') {
  */
 export async function simulateQuizGeneration(notes = '') {
   await wait(SIMULATED_DELAY_MS);
-  return { ...MOCK_QUIZ_SETS[0] };
+  const set = MOCK_QUIZ_SETS[0];
+  return { topic: set.topic, questions: set.questions.slice(0, 3) };
 }
 
 /**
