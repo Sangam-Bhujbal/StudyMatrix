@@ -308,8 +308,8 @@ export const CHATBOT_RESPONSES = {
   'tab-timer': [
     "The Pomodoro technique (25m work / 5m break) is scientifically proven to maximise focus and retention. ⏱",
     "I'll alert you if you switch tabs during a session! Stay locked in — your future self will thank you. 🎯",
-    "Try layering Brown Noise + 432Hz for the ultimate deep work soundscape. Many top performers swear by it!",
-    "Your audio mixer uses the Web Audio API — all synthesised locally, no downloads needed! 🎵",
+    "Try Sound Lab's Brown Noise + 432Hz for a deep work soundscape. Many top performers swear by it!",
+    "Sound Lab uses the Web Audio API — every wave is synthesised locally, with no downloads needed! 🎵",
   ],
   'tab-focus': [
     "Focus Terminal is live. Choose Male or Female, pick your language, and let one clean study block begin.",
@@ -326,8 +326,13 @@ export const CHATBOT_RESPONSES = {
   'tab-feynman': [
     "The Feynman Technique: if you can't explain it simply, you don't understand it yet. This module finds the gaps! 📝",
     "Type your explanation as if you're teaching a 10-year-old. The AI will find concepts you glossed over.",
-    "The Notes-to-Quiz generator turns passive notes into active recall practice — 2× better retention proven! 🧪",
+    "Use Quiz Lab after your explanation to turn passive notes into active recall practice. 🧪",
     "After your evaluation, focus your next study session on the 'Missing Points' section. That's your knowledge gap!",
+  ],
+  'tab-quiz': [
+    "Quiz Lab turns your notes into multiple-choice questions so you can test recall instead of rereading.",
+    "Try Demo Quiz for a ready-made challenge, or paste your own notes for a personalised set.",
+    "Answer every question, submit the quiz, and use each explanation to guide your next review.",
   ],
   'tab-bionic': [
     "Bionic Reading bolds the first syllables of words — your brain auto-completes the rest 2× faster! ⚡",

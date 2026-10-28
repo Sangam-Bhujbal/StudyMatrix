@@ -6,7 +6,6 @@
 import { DB } from './local-db.js';
 
 const voiceToggle  = document.getElementById('voice-coach-toggle');
-const voiceSelect  = document.getElementById('voice-select');
 const languageSelect = document.getElementById('voice-language');
 const presetWrap   = document.getElementById('voice-preset-list');
 
@@ -86,7 +85,9 @@ function pickVoiceForPreset(presetKey) {
   const wanted = preset.gender;
   if (savedVoiceURI) {
     const saved = allVoices.find((v) => v.voiceURI === savedVoiceURI);
-    if (saved && (genderOf(saved) === wanted || genderOf(saved) === 'neutral')) {
+    if (saved
+      && saved.lang.toLowerCase().startsWith(activeLanguage.slice(0, 2).toLowerCase())
+      && (genderOf(saved) === wanted || genderOf(saved) === 'neutral')) {
       return saved;
     }
   }
@@ -99,38 +100,10 @@ function pickVoiceForPreset(presetKey) {
   );
 }
 
-function populateVoiceSelect() {
-  if (!voiceSelect) return;
-  voiceSelect.innerHTML = '';
-  const groups = { female: [], male: [], neutral: [] };
-  const languageVoices = allVoices.filter((v) =>
-    v.lang.toLowerCase().startsWith(activeLanguage.slice(0, 2).toLowerCase())
-  );
-  const voicesToShow = languageVoices.length ? languageVoices : allVoices;
-  voicesToShow.forEach((v) => groups[genderOf(v)].push(v));
-
-  ['female', 'male', 'neutral'].forEach((g) => {
-    if (!groups[g].length) return;
-    const og = document.createElement('optgroup');
-    og.label = g === 'female' ? 'Female voices' : g === 'male' ? 'Male voices' : 'Other voices';
-    groups[g].forEach((v) => {
-      const opt = document.createElement('option');
-      opt.value = v.voiceURI;
-      opt.textContent = `${v.name} (${v.lang})`;
-      if (savedVoiceURI ? v.voiceURI === savedVoiceURI : preferredVoice && v.voiceURI === preferredVoice.voiceURI) {
-        opt.selected = true;
-      }
-      og.appendChild(opt);
-    });
-    voiceSelect.appendChild(og);
-  });
-}
-
 function loadVoices() {
   if (!isSpeechSupported) return;
   allVoices = synth.getVoices();
   preferredVoice = pickVoiceForPreset(activePreset);
-  populateVoiceSelect();
 }
 
 if (isSpeechSupported) {
@@ -182,23 +155,19 @@ function setPreset(key) {
   activePreset = key;
   DB.set('voice_preset', key);
   preferredVoice = pickVoiceForPreset(key);
-  if (preferredVoice) {
-    savedVoiceURI = preferredVoice.voiceURI;
-    DB.set('voice_uri', savedVoiceURI);
-  }
-
-  function setLanguage(language) {
-    activeLanguage = language;
-    DB.set('voice_language', language);
-    preferredVoice = pickVoiceForPreset(activePreset);
-    savedVoiceURI = preferredVoice?.voiceURI || '';
-    DB.set('voice_uri', savedVoiceURI);
-    populateVoiceSelect();
-  }
-  populateVoiceSelect();
+  savedVoiceURI = preferredVoice?.voiceURI || '';
+  DB.set('voice_uri', savedVoiceURI);
   document.querySelectorAll('.voice-preset-btn').forEach((btn) => {
     btn.classList.toggle('active', btn.dataset.preset === key);
   });
+}
+
+function setLanguage(language) {
+  activeLanguage = language;
+  DB.set('voice_language', language);
+  preferredVoice = pickVoiceForPreset(activePreset);
+  savedVoiceURI = preferredVoice?.voiceURI || '';
+  DB.set('voice_uri', savedVoiceURI);
 }
 
 function bindPresetButtons() {
@@ -216,13 +185,6 @@ function bindPresetButtons() {
     });
   });
 }
-
-voiceSelect?.addEventListener('change', () => {
-  savedVoiceURI = voiceSelect.value;
-  DB.set('voice_uri', savedVoiceURI);
-  preferredVoice = allVoices.find((v) => v.voiceURI === savedVoiceURI) || preferredVoice;
-  speak('Voice selected. I will coach you in this voice.', {});
-});
 
 if (languageSelect) {
   languageSelect.value = activeLanguage;

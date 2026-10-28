@@ -243,6 +243,13 @@
           </svg>
           <span class="nav-label">Feynman Lab</span>
         </a>
+        <a class="nav-link" data-tab="tab-quiz" href="#">
+          <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 5h8M8 9h8M8 13h5m-8 8h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+          <span class="nav-label">Quiz Lab</span>
+        </a>
         <a class="nav-link" data-tab="tab-bionic" href="#">
           <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -453,52 +460,9 @@
               </div>
             </div>
 
-            <!-- Audio Mixer Card -->
+            <!-- Voice Coach Card -->
             <div class="glass-card rounded-xl p-6">
-              <h3 class="font-bold text-white mb-4">Dual-Audio Mixer</h3>
-              <p class="text-gray-400 text-xs mb-5">Layer ambient frequencies over your own music for peak flow state.</p>
-
-              <!-- Frequency Tracks -->
-              <div class="space-y-4">
-                <div class="audio-track" data-freq="432">
-                  <div class="flex items-center justify-between mb-1">
-                    <div class="flex items-center gap-2">
-                      <button class="audio-toggle-btn" data-freq="432">▶</button>
-                      <span class="text-sm font-medium text-white">432Hz Solfeggio</span>
-                    </div>
-                    <span class="text-xs text-emerald font-mono" id="status-432">Stopped</span>
-                  </div>
-                  <input type="range" class="audio-slider" id="vol-432" min="0" max="1" step="0.01" value="0.5" />
-                  <p class="text-xs text-gray-500 mt-1">Universal frequency • Deep resonance</p>
-                </div>
-
-                <div class="audio-track" data-freq="brown">
-                  <div class="flex items-center justify-between mb-1">
-                    <div class="flex items-center gap-2">
-                      <button class="audio-toggle-btn" data-freq="brown">▶</button>
-                      <span class="text-sm font-medium text-white">Brown Noise</span>
-                    </div>
-                    <span class="text-xs text-emerald font-mono" id="status-brown">Stopped</span>
-                  </div>
-                  <input type="range" class="audio-slider" id="vol-brown" min="0" max="1" step="0.01" value="0.4" />
-                  <p class="text-xs text-gray-500 mt-1">Deep rumble • Blocks distractions</p>
-                </div>
-
-                <div class="audio-track" data-freq="rain">
-                  <div class="flex items-center justify-between mb-1">
-                    <div class="flex items-center gap-2">
-                      <button class="audio-toggle-btn" data-freq="rain">▶</button>
-                      <span class="text-sm font-medium text-white">Rain + Thunder</span>
-                    </div>
-                    <span class="text-xs text-emerald font-mono" id="status-rain">Stopped</span>
-                  </div>
-                  <input type="range" class="audio-slider" id="vol-rain" min="0" max="1" step="0.01" value="0.3" />
-                  <p class="text-xs text-gray-500 mt-1">Stochastic resonance • Calm focus</p>
-                </div>
-              </div>
-
-              <!-- Voice Coach Toggle -->
-              <div class="mt-5 pt-4 border-t border-white/10">
+              <div>
                 <div class="flex items-center justify-between mb-3">
                   <div>
                     <p class="text-sm font-medium text-white">Voice Coach</p>
@@ -517,8 +481,6 @@
                   <option value="hi-IN">Hindi (हिन्दी)</option>
                   <option value="mr-IN">Marathi (मराठी)</option>
                 </select>
-                <label class="block text-xs text-muted mb-1">Browser voice (male / female)</label>
-                <select id="voice-select" class="glass-input w-full text-sm mb-2"></select>
                 <button type="button" id="btn-preview-voice" class="btn-secondary text-xs w-full">Preview voice</button>
               </div>
             </div>
@@ -539,6 +501,21 @@
             <h3 class="font-bold text-white mb-1">Sound Lab</h3>
             <p class="text-gray-400 text-sm mb-5">Mix multiple browser-generated ambient waves. No downloads or external audio files.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="audio-track" data-freq="432">
+                <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="432">▶</button><span class="text-sm font-medium text-white">432Hz Solfeggio</span></div><span class="text-xs text-emerald font-mono" id="status-432">Stopped</span></div>
+                <input type="range" class="audio-slider" id="vol-432" min="0" max="1" step="0.01" value="0.5" />
+                <p class="text-xs text-gray-500 mt-1">Universal frequency • Deep resonance</p>
+              </div>
+              <div class="audio-track" data-freq="brown">
+                <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="brown">▶</button><span class="text-sm font-medium text-white">Brown Noise</span></div><span class="text-xs text-emerald font-mono" id="status-brown">Stopped</span></div>
+                <input type="range" class="audio-slider" id="vol-brown" min="0" max="1" step="0.01" value="0.4" />
+                <p class="text-xs text-gray-500 mt-1">Deep rumble • Blocks distractions</p>
+              </div>
+              <div class="audio-track" data-freq="rain">
+                <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="rain">▶</button><span class="text-sm font-medium text-white">Rain + Thunder</span></div><span class="text-xs text-emerald font-mono" id="status-rain">Stopped</span></div>
+                <input type="range" class="audio-slider" id="vol-rain" min="0" max="1" step="0.01" value="0.3" />
+                <p class="text-xs text-gray-500 mt-1">Stochastic resonance • Calm focus</p>
+              </div>
               <div class="audio-track" data-freq="ocean">
                 <div class="flex items-center justify-between mb-1"><div class="flex items-center gap-2"><button class="audio-toggle-btn" data-freq="ocean">▶</button><span class="text-sm font-medium text-white">Ocean Waves</span></div><span class="text-xs text-emerald font-mono" id="status-ocean">Stopped</span></div>
                 <input type="range" class="audio-slider" id="vol-ocean" min="0" max="1" step="0.01" value="0.3" />
@@ -635,25 +612,20 @@
             </div>
           </div>
 
-          <!-- Notes-to-Quiz Section -->
-          <div class="glass-card rounded-xl p-6 mt-4">
+        </section>
+
+        <!-- ── TAB: Quiz Lab ── -->
+        <section id="tab-quiz" class="workspace-panel hidden">
+          <div class="glass-card rounded-xl p-6">
             <h3 class="font-bold text-white mb-1">Notes-to-Quiz Generator</h3>
-            <p class="text-gray-400 text-sm mb-4">Paste your study notes — AI generates multiple-choice questions.</p>
+            <p class="text-gray-400 text-sm mb-4">Paste your study notes and turn them into an interactive multiple-choice quiz.</p>
             <div class="flex gap-3 mb-4">
-              <textarea id="quiz-notes-input"
-                        rows="4"
-                        placeholder="Paste your notes here..."
-                        class="glass-input flex-1 resize-none text-sm"></textarea>
+              <textarea id="quiz-notes-input" rows="4" placeholder="Paste your notes here..." class="glass-input flex-1 resize-none text-sm"></textarea>
               <div class="flex flex-col gap-2 justify-end">
-                <button id="btn-generate-quiz" class="btn-primary whitespace-nowrap px-6">
-                  Generate Quiz ✨
-                </button>
-                <button id="btn-demo-quiz" class="btn-secondary whitespace-nowrap px-6 text-sm">
-                  Demo Quiz
-                </button>
+                <button id="btn-generate-quiz" class="btn-primary whitespace-nowrap px-6">Generate Quiz ✨</button>
+                <button id="btn-demo-quiz" class="btn-secondary whitespace-nowrap px-6 text-sm">Demo Quiz</button>
               </div>
             </div>
-            <!-- Quiz Output -->
             <div id="quiz-loading" class="hidden text-center py-4">
               <div class="ai-spinner mx-auto mb-2"></div>
               <p class="text-violet text-sm animate-pulse">Generating questions...</p>

@@ -291,14 +291,21 @@ function speakChat(text) {
   if (!enabled || !synth) return;
   if (synth.speaking) synth.cancel();
   const utt = new SpeechSynthesisUtterance(text.replace(/[📊🧠⏱🎯🎵📝🧪⚡🤖💡]/g, ''));
-  const selectedURI = document.getElementById('voice-select')?.value;
+  const language = DB.get('voice_language', 'en-US');
+  const preset = DB.get('voice_preset', 'male') === 'female' ? 'female' : 'male';
   const voices = synth.getVoices();
+  const genderOf = (voice) => /zira|samantha|victoria|karen|female|woman/i.test(`${voice.name} ${voice.lang}`)
+    ? 'female'
+    : /david|mark|daniel|male|man/i.test(`${voice.name} ${voice.lang}`) ? 'male' : 'neutral';
+  const languageCode = language.slice(0, 2).toLowerCase();
   utt.voice =
-    voices.find((v) => v.voiceURI === selectedURI) ||
-    voices.find((v) => /female/i.test(v.name) && v.lang.startsWith('en')) ||
+    voices.find((v) => v.lang.toLowerCase().startsWith(languageCode) && genderOf(v) === preset) ||
+    voices.find((v) => v.lang.toLowerCase().startsWith(languageCode)) ||
+    voices.find((v) => genderOf(v) === preset && v.lang.startsWith('en')) ||
     voices.find((v) => v.lang.startsWith('en')) ||
     voices[0] ||
     null;
+  utt.lang = language;
   utt.rate = 1;
   synth.speak(utt);
 }

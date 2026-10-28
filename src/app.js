@@ -24,6 +24,7 @@ const TAB_META = {
   'tab-timer':     { title: 'Focus Timer',   subtitle: 'Strict terminal — no distractions' },
   'tab-sounds':    { title: 'Sound Lab',     subtitle: 'Ambient waves for deep focus' },
   'tab-feynman':   { title: 'Feynman Lab',   subtitle: 'Teach it to know it' },
+  'tab-quiz':      { title: 'Quiz Lab',      subtitle: 'Turn notes into active recall' },
   'tab-bionic':    { title: 'Bionic Reader', subtitle: 'Read faster with neural typography' },
   'tab-schedule':  { title: 'My Schedule',   subtitle: 'AI-adaptive study timetable' },
   'tab-settings':  { title: 'Settings',      subtitle: 'Cloud sync, simulation, JSON backup' },
