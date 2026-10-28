@@ -161,9 +161,11 @@ async function renderMermaid(diagramSrc) {
     const svgEl = div.querySelector('svg');
     if (svgEl) {
       svgEl.style.width = '100%';
-      svgEl.style.height = '300px';
-      svgEl.style.maxWidth = '100%';
-      svgEl.setAttribute('preserveAspectRatio', 'none');
+      svgEl.style.height = 'auto';
+      svgEl.style.minHeight = '300px';
+      svgEl.style.display = 'block';
+      svgEl.style.maxWidth = 'none';
+      svgEl.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     }
   } catch (renderErr) {
     // Fallback: show raw mermaid as code block

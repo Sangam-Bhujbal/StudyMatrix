@@ -447,8 +447,10 @@ textarea.glass-input { resize: vertical; }
 .mermaid-wrapper svg {
   display: block;
   width: 100%;
-  max-width: 100%;
-  min-height: 260px;
+  height: auto;
+  max-width: none;
+  min-height: 300px;
+  image-rendering: auto;
 }
 
 /* ══════════════════════════════════════════
